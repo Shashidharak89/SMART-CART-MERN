@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { FaFire } from 'react-icons/fa';
 import ProductCard from './ProductCard';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -79,7 +80,7 @@ const TrendingSection = ({ onAddToCart, trendingRef }) => {
     <section className="trending-section" ref={(el) => { sectionRef.current = el; if (trendingRef) trendingRef.current = el; }} id="trending">
       <div className="container">
         <div className="trending-header">
-          <span className="badge badge-brand">Hot This Week 🔥</span>
+          <span className="badge badge-brand"><FaFire style={{ marginRight: '4px' }} /> Hot This Week</span>
           <h2 className="trending-title">Trending Products</h2>
           <p className="trending-subtitle">Handpicked top performers loved by thousands of shoppers.</p>
         </div>

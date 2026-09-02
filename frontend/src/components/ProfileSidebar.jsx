@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config/api';
+import { FiMapPin, FiPhone, FiShoppingBag } from 'react-icons/fi';
 import './ProfileSidebar.css';
 
 const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
@@ -278,7 +279,7 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
           {/* SAVED ADDRESS TAB */}
           {activeTab === 'address' && (
             <div className="sidebar-tab-content">
-              <h3 className="tab-title">📍 Saved Delivery Address</h3>
+              <h3 className="tab-title"><FiMapPin style={{ marginRight: '6px' }} /> Saved Delivery Address</h3>
 
               {addressSuccessMsg && <div className="alert-success">{addressSuccessMsg}</div>}
               {addressErrorMsg && <div className="alert-error">{addressErrorMsg}</div>}
@@ -358,7 +359,7 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
                       <p className="address-street">{user.address.street}</p>
                       <p>{user.address.city}, {user.address.state} - {user.address.zipCode}</p>
                       <p>{user.address.country}</p>
-                      <p className="address-phone">📞 Phone: {user.address.phone || 'Not provided'}</p>
+                      <p className="address-phone"><FiPhone style={{ marginRight: '4px' }} /> Phone: {user.address.phone || 'Not provided'}</p>
                     </div>
                   ) : (
                     <p className="no-address-text">No saved shipping address found in your account.</p>
@@ -378,7 +379,7 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
           {/* MY ORDERS TAB */}
           {activeTab === 'orders' && (
             <div className="sidebar-tab-content">
-              <h3 className="tab-title">🛍️ My Orders</h3>
+              <h3 className="tab-title"><FiShoppingBag style={{ marginRight: '6px' }} /> My Orders</h3>
 
               {loadingOrders ? (
                 <div className="loading-spinner-box">Loading your orders...</div>

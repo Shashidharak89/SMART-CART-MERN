@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { FiTrendingUp, FiStar, FiZap, FiGift } from 'react-icons/fi';
 import gsap from 'gsap';
 import './Hero.css';
 
@@ -55,7 +56,7 @@ const Hero = ({ onExploreClick, onTrendingClick, onOpenAuth }) => {
             </button>
 
             <button className="btn btn-secondary hero-btn" onClick={onTrendingClick}>
-              🔥 Trending Items
+              <FiTrendingUp style={{ marginRight: '6px' }} /> Trending Items
             </button>
 
             {!user && (
@@ -73,7 +74,7 @@ const Hero = ({ onExploreClick, onTrendingClick, onOpenAuth }) => {
             </div>
             <div className="stat-divider"></div>
             <div className="stat-item">
-              <span className="stat-number">4.9★</span>
+              <span className="stat-number">4.9 <FiStar style={{ fontSize: '0.8em', color: '#f59e0b' }} /></span>
               <span className="stat-label">User Rating</span>
             </div>
             <div className="stat-divider"></div>
@@ -93,14 +94,14 @@ const Hero = ({ onExploreClick, onTrendingClick, onOpenAuth }) => {
               className="hero-image"
             />
             <div className="floating-card floating-top-left">
-              <div className="floating-icon">⚡</div>
+              <div className="floating-icon"><FiZap /></div>
               <div>
                 <p className="floating-title">Top Choice</p>
                 <p className="floating-subtitle">Aura Headphones</p>
               </div>
             </div>
             <div className="floating-card floating-bottom-right">
-              <div className="floating-icon">🎁</div>
+              <div className="floating-icon"><FiGift /></div>
               <div>
                 <p className="floating-title">Free Express</p>
                 <p className="floating-subtitle">Shipping Available</p>

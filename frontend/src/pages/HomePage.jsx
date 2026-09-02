@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FiTruck, FiShield, FiRefreshCw } from 'react-icons/fi';
 import Hero from '../components/Hero';
 import TrendingSection from '../components/TrendingSection';
 import './HomePage.css';
@@ -37,17 +38,17 @@ const HomePage = ({ onAddToCart, onOpenAuth }) => {
       <section className="features-section">
         <div className="container features-grid">
           <div className="feature-card">
-            <div className="feature-icon">🚚</div>
+            <div className="feature-icon"><FiTruck /></div>
             <h3>Free Express Delivery</h3>
             <p>On all orders over ₹499 with live tracking updates.</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">🛡️</div>
+            <div className="feature-icon"><FiShield /></div>
             <h3>Guaranteed Authenticity</h3>
             <p>100% verified premium products straight from makers.</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">🔄</div>
+            <div className="feature-icon"><FiRefreshCw /></div>
             <h3>Hassle-Free Returns</h3>
             <p>30-day money-back guarantee with instant refunds.</p>
           </div>

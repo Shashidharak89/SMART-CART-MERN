@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config/api';
+import { FiLock, FiAlertTriangle, FiPackage, FiShoppingBag, FiRefreshCw, FiPhone } from 'react-icons/fi';
 import './AdminPage.css';
 
 const AdminPage = ({ onOpenAuth }) => {
@@ -247,7 +248,7 @@ const AdminPage = ({ onOpenAuth }) => {
     return (
       <div className="admin-unauth-container container fade-in">
         <div className="admin-auth-card">
-          <div className="admin-lock-icon">🔒</div>
+          <div className="admin-lock-icon"><FiLock /></div>
           <h2>Admin Authorization Required</h2>
           <p>Please sign in with an Admin account to access the administration panel.</p>
           <button className="btn btn-primary" onClick={() => onOpenAuth('login')}>
@@ -262,7 +263,7 @@ const AdminPage = ({ onOpenAuth }) => {
     return (
       <div className="admin-unauth-container container fade-in">
         <div className="admin-auth-card">
-          <div className="admin-lock-icon">⚠️</div>
+          <div className="admin-lock-icon"><FiAlertTriangle /></div>
           <h2>Access Denied</h2>
           <p>
             Your account (<strong>{user.email}</strong>) has <code>role: "{user.role}"</code>.
@@ -298,13 +299,13 @@ const AdminPage = ({ onOpenAuth }) => {
             className={`admin-tab-btn ${adminTab === 'products' ? 'active' : ''}`}
             onClick={() => setAdminTab('products')}
           >
-            📦 Product Catalog ({productsList.length})
+            <FiPackage style={{ marginRight: '6px' }} /> Product Catalog ({productsList.length})
           </button>
           <button
             className={`admin-tab-btn ${adminTab === 'orders' ? 'active' : ''}`}
             onClick={() => setAdminTab('orders')}
           >
-            🛍️ Customer Orders ({ordersList.length})
+            <FiShoppingBag style={{ marginRight: '6px' }} /> Customer Orders ({ordersList.length})
           </button>
         </div>
       </div>
@@ -527,7 +528,7 @@ const AdminPage = ({ onOpenAuth }) => {
               </p>
             </div>
             <button className="btn btn-secondary btn-sm" onClick={fetchOrders}>
-              🔄 Refresh List
+              <FiRefreshCw style={{ marginRight: '6px' }} /> Refresh List
             </button>
           </div>
 
@@ -590,7 +591,7 @@ const AdminPage = ({ onOpenAuth }) => {
                         <td className="address-details-cell">
                           <p><strong>{order.shippingAddress?.street}</strong></p>
                           <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.zipCode}</p>
-                          <p>📞 {order.shippingAddress?.phone}</p>
+                          <p><FiPhone style={{ marginRight: '4px' }} /> {order.shippingAddress?.phone}</p>
                         </td>
 
                         <td className="items-details-cell">

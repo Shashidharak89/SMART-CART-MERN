@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config/api';
+import { FiShoppingCart, FiLock, FiMapPin, FiDollarSign, FiCheck } from 'react-icons/fi';
 import './CartDrawer.css';
 
 const CartDrawer = ({
@@ -166,7 +167,7 @@ const CartDrawer = ({
             <div className="cart-body">
               {cartItems.length === 0 ? (
                 <div className="empty-cart">
-                  <div className="empty-cart-icon">🛒</div>
+                  <div className="empty-cart-icon"><FiShoppingCart /></div>
                   <p className="empty-cart-title">Your cart is empty</p>
                   <p className="empty-cart-desc">Add items from our store to get started.</p>
                 </div>
@@ -232,7 +233,7 @@ const CartDrawer = ({
 
                 {!token && (
                   <p className="login-notice">
-                    🔑 You will be asked to sign in before placing your order.
+                    <FiLock style={{ marginRight: '6px' }} /> You will be asked to sign in before placing your order.
                   </p>
                 )}
 
@@ -258,7 +259,7 @@ const CartDrawer = ({
 
             <form onSubmit={handlePlaceOrder} id="checkout-form">
               <div className="checkout-section">
-                <h3 className="section-heading">📍 Shipping Address</h3>
+                <h3 className="section-heading"><FiMapPin style={{ marginRight: '6px' }} /> Shipping Address</h3>
                 
                 <div className="form-group">
                   <label>Street Address *</label>
@@ -335,7 +336,7 @@ const CartDrawer = ({
               </div>
 
               <div className="checkout-section margin-top">
-                <h3 className="section-heading">💵 Payment Method</h3>
+                <h3 className="section-heading"><FiDollarSign style={{ marginRight: '6px' }} /> Payment Method</h3>
                 <div className="payment-options">
                   <label className="payment-option selected">
                     <input
@@ -383,7 +384,7 @@ const CartDrawer = ({
         {/* STEP 3: ORDER SUCCESS VIEW */}
         {checkoutStep === 'success' && (
           <div className="cart-success-view fade-in">
-            <div className="success-icon">✓</div>
+            <div className="success-icon"><FiCheck /></div>
             <h3>Order Placed Successfully!</h3>
             <p className="order-id-badge">Order ID: #{createdOrder?._id}</p>
             <p>Thank you for shopping with SmartCart. Your order has been saved to your account and is currently being processed.</p>

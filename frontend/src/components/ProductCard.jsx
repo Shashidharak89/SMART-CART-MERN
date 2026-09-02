@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaStar } from 'react-icons/fa';
 import './ProductCard.css';
 
 const ProductCard = ({ product, onAddToCart }) => {
@@ -42,7 +43,7 @@ const ProductCard = ({ product, onAddToCart }) => {
 
         {/* Rating Stars */}
         <div className="product-rating">
-          <span className="stars">★</span>
+          <FaStar className="stars" />
           <span className="rating-score">{product.rating}</span>
           <span className="reviews-count">({product.reviewsCount})</span>
         </div>
