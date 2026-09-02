@@ -239,6 +239,36 @@
   margin-top: 0.5rem;
 }
 
+.order-filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--cream-soft);
+  color: var(--text-muted);
+  font-size: 0.775rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-pill:hover {
+  background: var(--cream-accent);
+  color: var(--text-main);
+}
+
+.filter-pill.active {
+  background: var(--pista-badge);
+  color: var(--pista-hover);
+  border-color: var(--pista-main);
+}
+
 .admin-products-table-wrapper,
 .admin-orders-table-wrapper {
   overflow-x: auto;

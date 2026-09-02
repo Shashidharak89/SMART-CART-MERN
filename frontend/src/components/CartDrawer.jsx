@@ -335,47 +335,19 @@ const CartDrawer = ({
               </div>
 
               <div className="checkout-section margin-top">
-                <h3 className="section-heading">💳 Payment Method</h3>
+                <h3 className="section-heading">💵 Payment Method</h3>
                 <div className="payment-options">
-                  <label className={`payment-option ${paymentMethod === 'Cash on Delivery' ? 'selected' : ''}`}>
+                  <label className="payment-option selected">
                     <input
                       type="radio"
                       name="paymentMethod"
                       value="Cash on Delivery"
-                      checked={paymentMethod === 'Cash on Delivery'}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      checked={true}
+                      readOnly
                     />
                     <div>
-                      <strong>Cash on Delivery (COD)</strong>
-                      <p>Pay in cash when your parcel is delivered</p>
-                    </div>
-                  </label>
-
-                  <label className={`payment-option ${paymentMethod === 'UPI / NetBanking' ? 'selected' : ''}`}>
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="UPI / NetBanking"
-                      checked={paymentMethod === 'UPI / NetBanking'}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-                    <div>
-                      <strong>UPI / NetBanking / Wallet</strong>
-                      <p>Instant digital payment via Google Pay, PhonePe, Paytm</p>
-                    </div>
-                  </label>
-
-                  <label className={`payment-option ${paymentMethod === 'Credit / Debit Card' ? 'selected' : ''}`}>
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="Credit / Debit Card"
-                      checked={paymentMethod === 'Credit / Debit Card'}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-                    <div>
-                      <strong>Credit / Debit Card</strong>
-                      <p>Visa, MasterCard, RuPay</p>
+                      <strong>Cash on Delivery (COD) <span className="cod-active-badge">Active</span></strong>
+                      <p>Pay cash upon delivery at your doorstep. Safe & convenient.</p>
                     </div>
                   </label>
                 </div>

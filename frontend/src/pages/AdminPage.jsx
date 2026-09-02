@@ -29,6 +29,7 @@ const AdminPage = ({ onOpenAuth }) => {
   // Orders management state
   const [ordersList, setOrdersList] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+  const [orderFilter, setOrderFilter] = useState('All');
 
   // Fetch current products for management
   const fetchProducts = async () => {
@@ -61,6 +62,27 @@ const AdminPage = ({ onOpenAuth }) => {
       console.error('Error fetching admin orders list:', err);
     } finally {
       setLoadingOrders(false);
+    }
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm('Are you sure you want to delete this order from database?')) return;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/orders/${orderId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        setMessage({ type: 'success', text: 'Order deleted successfully from database.' });
+        fetchOrders();
+      } else {
+        const data = await res.json();
+        throw new Error(data.message || 'Failed to delete order');
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: err.message });
     }
   };
 
@@ -498,10 +520,28 @@ const AdminPage = ({ onOpenAuth }) => {
       {adminTab === 'orders' && (
         <div className="admin-card admin-orders-card">
           <div className="admin-card-header">
-            <h3>Customer Orders Management ({ordersList.length})</h3>
+            <div>
+              <h3>Customer Orders Management ({ordersList.length})</h3>
+              <p className="admin-subtitle" style={{ marginTop: '0.2rem' }}>
+                View all orders placed in database, update order status, or remove orders.
+              </p>
+            </div>
             <button className="btn btn-secondary btn-sm" onClick={fetchOrders}>
               🔄 Refresh List
             </button>
+          </div>
+
+          {/* Filter Pills */}
+          <div className="order-filter-bar">
+            {['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map((st) => (
+              <button
+                key={st}
+                className={`filter-pill ${orderFilter === st ? 'active' : ''}`}
+                onClick={() => setOrderFilter(st)}
+              >
+                {st} {st !== 'All' && `(${ordersList.filter((o) => o.status === st).length})`}
+              </button>
+            ))}
           </div>
 
           {loadingOrders ? (
@@ -521,64 +561,77 @@ const AdminPage = ({ onOpenAuth }) => {
                     <th>Items Purchased</th>
                     <th>Total & Payment</th>
                     <th>Status</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {ordersList.map((order) => (
-                    <tr key={order._id}>
-                      <td className="order-details-cell">
-                        <strong>#{order._id.slice(-8).toUpperCase()}</strong>
-                        <span className="order-date-text">
-                          {new Date(order.createdAt).toLocaleString('en-IN', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                      </td>
+                  {ordersList
+                    .filter((order) => orderFilter === 'All' || order.status === orderFilter)
+                    .map((order) => (
+                      <tr key={order._id}>
+                        <td className="order-details-cell">
+                          <strong>#{order._id.slice(-8).toUpperCase()}</strong>
+                          <span className="order-date-text">
+                            {new Date(order.createdAt).toLocaleString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </span>
+                        </td>
 
-                      <td className="user-details-cell">
-                        <strong>{order.user?.name || 'User'}</strong>
-                        <span>{order.user?.email || 'N/A'}</span>
-                      </td>
+                        <td className="user-details-cell">
+                          <strong>{order.user?.name || 'User'}</strong>
+                          <span>{order.user?.email || 'N/A'}</span>
+                        </td>
 
-                      <td className="address-details-cell">
-                        <p><strong>{order.shippingAddress?.street}</strong></p>
-                        <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.zipCode}</p>
-                        <p>📞 {order.shippingAddress?.phone}</p>
-                      </td>
+                        <td className="address-details-cell">
+                          <p><strong>{order.shippingAddress?.street}</strong></p>
+                          <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.zipCode}</p>
+                          <p>📞 {order.shippingAddress?.phone}</p>
+                        </td>
 
-                      <td className="items-details-cell">
-                        {order.orderItems.map((item, idx) => (
-                          <div key={idx} className="admin-order-item">
-                            <span>{item.quantity}x {item.name}</span>
-                            <span className="muted">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
-                          </div>
-                        ))}
-                      </td>
+                        <td className="items-details-cell">
+                          {order.orderItems.map((item, idx) => (
+                            <div key={idx} className="admin-order-item">
+                              <span>{item.quantity}x {item.name}</span>
+                              <span className="muted">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                            </div>
+                          ))}
+                        </td>
 
-                      <td className="price-details-cell">
-                        <strong className="order-price-val">₹{order.totalPrice.toLocaleString('en-IN')}</strong>
-                        <span className="badge badge-secondary">{order.paymentMethod}</span>
-                      </td>
+                        <td className="price-details-cell">
+                          <strong className="order-price-val">₹{order.totalPrice.toLocaleString('en-IN')}</strong>
+                          <span className="badge badge-secondary">{order.paymentMethod}</span>
+                        </td>
 
-                      <td>
-                        <select
-                          value={order.status}
-                          onChange={(e) => handleUpdateOrderStatus(order._id, e.target.value)}
-                          className={`status-select status-select-${order.status.toLowerCase()}`}
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Processing">Processing</option>
-                          <option value="Shipped">Shipped</option>
-                          <option value="Delivered">Delivered</option>
-                          <option value="Cancelled">Cancelled</option>
-                        </select>
-                      </td>
-                    </tr>
-                  ))}
+                        <td>
+                          <select
+                            value={order.status}
+                            onChange={(e) => handleUpdateOrderStatus(order._id, e.target.value)}
+                            className={`status-select status-select-${order.status.toLowerCase()}`}
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
+                        </td>
+
+                        <td>
+                          <button
+                            className="table-delete-btn"
+                            onClick={() => handleDeleteOrder(order._id)}
+                            title="Delete Order"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
