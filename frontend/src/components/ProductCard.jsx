@@ -50,9 +50,9 @@ const ProductCard = ({ product, onAddToCart }) => {
         {/* Price & Action Button */}
         <div className="product-footer">
           <div className="price-container">
-            <span className="price-current">${product.price.toFixed(2)}</span>
+            <span className="price-current">₹{product.price.toLocaleString('en-IN')}</span>
             {product.originalPrice && (
-              <span className="price-original">${product.originalPrice.toFixed(2)}</span>
+              <span className="price-original">₹{product.originalPrice.toLocaleString('en-IN')}</span>
             )}
           </div>
 

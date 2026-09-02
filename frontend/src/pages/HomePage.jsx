@@ -39,7 +39,7 @@ const HomePage = ({ onAddToCart, onOpenAuth }) => {
           <div className="feature-card">
             <div className="feature-icon">🚚</div>
             <h3>Free Express Delivery</h3>
-            <p>On all orders over $50 with live tracking updates.</p>
+            <p>On all orders over ₹499 with live tracking updates.</p>
           </div>
           <div className="feature-card">
             <div className="feature-icon">🛡️</div>

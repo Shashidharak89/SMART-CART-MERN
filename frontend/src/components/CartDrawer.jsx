@@ -7,7 +7,7 @@ const CartDrawer = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem
   if (!isOpen) return null;
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const shipping = subtotal > 50 || subtotal === 0 ? 0 : 9.99;
+  const shipping = subtotal > 499 || subtotal === 0 ? 0 : 99;
   const grandTotal = subtotal + shipping;
 
   const handleCheckout = () => {
@@ -60,7 +60,7 @@ const CartDrawer = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem
                       <img src={item.image} alt={item.name} className="cart-item-image" />
                       <div className="cart-item-info">
                         <h4 className="cart-item-name">{item.name}</h4>
-                        <span className="cart-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="cart-item-price">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                         
                         <div className="cart-item-controls">
                           <div className="qty-picker">
@@ -99,18 +99,18 @@ const CartDrawer = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem
               <div className="cart-footer">
                 <div className="summary-row">
                   <span>Subtotal</span>
-                  <span className="summary-val">${subtotal.toFixed(2)}</span>
+                  <span className="summary-val">₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="summary-row">
                   <span>Shipping</span>
                   <span className="summary-val">
-                    {shipping === 0 ? <span className="free-tag">FREE</span> : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? <span className="free-tag">FREE</span> : `₹${shipping.toLocaleString('en-IN')}`}
                   </span>
                 </div>
                 <div className="summary-divider"></div>
                 <div className="summary-row total-row">
                   <span>Total</span>
-                  <span className="total-val">${grandTotal.toFixed(2)}</span>
+                  <span className="total-val">₹{grandTotal.toLocaleString('en-IN')}</span>
                 </div>
 
                 <button
