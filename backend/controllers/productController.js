@@ -153,7 +153,7 @@ const getProducts = async (req, res) => {
 // @access  Private/Admin
 const createProduct = async (req, res) => {
   try {
-    const { name, category, price, originalPrice, description, tag, imageUrl } = req.body;
+    const { name, category, price, originalPrice, rating, reviewsCount, description, tag, inStock, imageUrl } = req.body;
 
     let finalImageUrl = imageUrl;
 
@@ -179,6 +179,9 @@ const createProduct = async (req, res) => {
       category,
       price: Number(price),
       originalPrice: originalPrice ? Number(originalPrice) : undefined,
+      rating: rating !== undefined ? Number(rating) : 4.8,
+      reviewsCount: reviewsCount !== undefined ? Number(reviewsCount) : 12,
+      inStock: inStock !== undefined ? (inStock === true || inStock === 'true') : true,
       image: finalImageUrl,
       description,
       tag: tag || 'New Arrival',
@@ -203,6 +206,84 @@ const createProduct = async (req, res) => {
   }
 };
 
+// @desc    Update a product (Admin Only)
+// @route   PUT /api/products/:id
+// @access  Private/Admin
+const updateProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const {
+      name,
+      category,
+      price,
+      originalPrice,
+      rating,
+      reviewsCount,
+      description,
+      tag,
+      inStock,
+      imageUrl,
+    } = req.body;
+
+    let finalImageUrl = product.image;
+
+    if (req.file) {
+      try {
+        const uploadResult = await uploadToCloudinary(req.file.buffer);
+        finalImageUrl = uploadResult.secure_url;
+      } catch (uploadErr) {
+        console.error('Cloudinary Upload Error during update:', uploadErr);
+        return res.status(500).json({ message: 'Failed to upload new image to Cloudinary: ' + uploadErr.message });
+      }
+    } else if (imageUrl) {
+      finalImageUrl = imageUrl;
+    }
+
+    product.name = name !== undefined ? name : product.name;
+    product.category = category !== undefined ? category : product.category;
+    product.price = price !== undefined ? Number(price) : product.price;
+    if (originalPrice !== undefined) {
+      product.originalPrice = originalPrice !== '' ? Number(originalPrice) : undefined;
+    }
+    if (rating !== undefined && rating !== '') {
+      product.rating = Number(rating);
+    }
+    if (reviewsCount !== undefined && reviewsCount !== '') {
+      product.reviewsCount = Number(reviewsCount);
+    }
+    if (inStock !== undefined) {
+      product.inStock = (inStock === true || inStock === 'true');
+    }
+    product.image = finalImageUrl;
+    product.description = description !== undefined ? description : product.description;
+    product.tag = tag !== undefined ? tag : product.tag;
+
+    const updatedProduct = await product.save();
+
+    res.json({
+      id: updatedProduct._id.toString(),
+      name: updatedProduct.name,
+      category: updatedProduct.category,
+      price: updatedProduct.price,
+      originalPrice: updatedProduct.originalPrice,
+      rating: updatedProduct.rating,
+      reviewsCount: updatedProduct.reviewsCount,
+      image: updatedProduct.image,
+      description: updatedProduct.description,
+      tag: updatedProduct.tag,
+      inStock: updatedProduct.inStock,
+    });
+  } catch (error) {
+    console.error('Error in updateProduct:', error);
+    res.status(500).json({ message: error.message || 'Server error updating product' });
+  }
+};
+
 // @desc    Delete a product (Admin Only)
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
@@ -224,5 +305,6 @@ const deleteProduct = async (req, res) => {
 module.exports = {
   getProducts,
   createProduct,
+  updateProduct,
   deleteProduct,
 };

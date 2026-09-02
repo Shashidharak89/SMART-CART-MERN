@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config/api';
-import { FiLock, FiAlertTriangle, FiPackage, FiShoppingBag, FiRefreshCw, FiPhone } from 'react-icons/fi';
+import { FiLock, FiAlertTriangle, FiPackage, FiShoppingBag, FiRefreshCw, FiPhone, FiEdit, FiTrash2, FiPlus, FiStar } from 'react-icons/fi';
 import './AdminPage.css';
 
 const AdminPage = ({ onOpenAuth }) => {
@@ -9,11 +9,17 @@ const AdminPage = ({ onOpenAuth }) => {
 
   const [adminTab, setAdminTab] = useState('products'); // 'products' | 'orders'
 
+  // Product edit state
+  const [editingProductId, setEditingProductId] = useState(null);
+
   // Product form state
   const [name, setName] = useState('');
   const [category, setCategory] = useState('Electronics');
   const [price, setPrice] = useState('');
   const [originalPrice, setOriginalPrice] = useState('');
+  const [rating, setRating] = useState('4.8');
+  const [reviewsCount, setReviewsCount] = useState('12');
+  const [inStock, setInStock] = useState(true);
   const [tag, setTag] = useState('New Arrival');
   const [description, setDescription] = useState('');
   const [imageMode, setImageMode] = useState('file'); // 'file' or 'url'
@@ -31,6 +37,44 @@ const AdminPage = ({ onOpenAuth }) => {
   const [ordersList, setOrdersList] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [orderFilter, setOrderFilter] = useState('All');
+
+  const resetForm = () => {
+    setName('');
+    setCategory('Electronics');
+    setPrice('');
+    setOriginalPrice('');
+    setRating('4.8');
+    setReviewsCount('12');
+    setInStock(true);
+    setTag('New Arrival');
+    setDescription('');
+    setImageFile(null);
+    setImagePreview('');
+    setImageUrl('');
+    setImageMode('file');
+    setEditingProductId(null);
+  };
+
+  const handleStartEdit = (prod) => {
+    setEditingProductId(prod.id || prod._id);
+    setName(prod.name || '');
+    setCategory(prod.category || 'Electronics');
+    setPrice(prod.price !== undefined ? prod.price : '');
+    setOriginalPrice(prod.originalPrice !== undefined ? prod.originalPrice : '');
+    setRating(prod.rating !== undefined ? prod.rating : '4.8');
+    setReviewsCount(prod.reviewsCount !== undefined ? prod.reviewsCount : '12');
+    setInStock(prod.inStock !== false);
+    setTag(prod.tag || 'New Arrival');
+    setDescription(prod.description || '');
+    setImageUrl(prod.image || '');
+    setImagePreview(prod.image || '');
+    setImageMode('url');
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+  };
 
   // Fetch current products for management
   const fetchProducts = async () => {
@@ -109,21 +153,21 @@ const AdminPage = ({ onOpenAuth }) => {
     }
   };
 
-  const handleAddProduct = async (e) => {
+  const handleSubmitProduct = async (e) => {
     e.preventDefault();
     setMessage(null);
 
-    if (!name || !category || !price) {
+    if (!name || !category || price === '') {
       setMessage({ type: 'error', text: 'Name, Category, and Price are required.' });
       return;
     }
 
-    if (imageMode === 'file' && !imageFile) {
+    if (!editingProductId && imageMode === 'file' && !imageFile) {
       setMessage({ type: 'error', text: 'Please select an image file to upload.' });
       return;
     }
 
-    if (imageMode === 'url' && !imageUrl) {
+    if (!editingProductId && imageMode === 'url' && !imageUrl) {
       setMessage({ type: 'error', text: 'Please provide an image URL.' });
       return;
     }
@@ -132,26 +176,35 @@ const AdminPage = ({ onOpenAuth }) => {
 
     try {
       let res;
-      if (imageMode === 'file') {
+      const isEdit = !!editingProductId;
+      const endpoint = isEdit
+        ? `${API_BASE_URL}/api/products/${editingProductId}`
+        : `${API_BASE_URL}/api/products`;
+      const method = isEdit ? 'PUT' : 'POST';
+
+      if (imageMode === 'file' && imageFile) {
         const formData = new FormData();
         formData.append('name', name);
         formData.append('category', category);
         formData.append('price', price);
-        if (originalPrice) formData.append('originalPrice', originalPrice);
+        if (originalPrice !== '') formData.append('originalPrice', originalPrice);
+        formData.append('rating', rating);
+        formData.append('reviewsCount', reviewsCount);
+        formData.append('inStock', inStock);
         formData.append('tag', tag);
         formData.append('description', description);
         formData.append('image', imageFile);
 
-        res = await fetch(`${API_BASE_URL}/api/products`, {
-          method: 'POST',
+        res = await fetch(endpoint, {
+          method,
           headers: {
             Authorization: `Bearer ${token}`,
           },
           body: formData,
         });
       } else {
-        res = await fetch(`${API_BASE_URL}/api/products`, {
-          method: 'POST',
+        res = await fetch(endpoint, {
+          method,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -160,10 +213,13 @@ const AdminPage = ({ onOpenAuth }) => {
             name,
             category,
             price,
-            originalPrice,
+            originalPrice: originalPrice !== '' ? originalPrice : undefined,
+            rating,
+            reviewsCount,
+            inStock,
             tag,
             description,
-            imageUrl,
+            imageUrl: imageMode === 'url' ? imageUrl : undefined,
           }),
         });
       }
@@ -171,26 +227,18 @@ const AdminPage = ({ onOpenAuth }) => {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || 'Failed to add product');
+        throw new Error(data.message || `Failed to ${isEdit ? 'update' : 'add'} product`);
       }
 
       setMessage({
         type: 'success',
-        text: `Product "${data.name}" added successfully!`,
+        text: `Product "${data.name}" ${isEdit ? 'updated' : 'added'} successfully!`,
       });
 
-      // Reset Form
-      setName('');
-      setPrice('');
-      setOriginalPrice('');
-      setDescription('');
-      setImageFile(null);
-      setImagePreview('');
-      setImageUrl('');
-
+      resetForm();
       fetchProducts();
     } catch (err) {
-      console.error('Error adding product:', err);
+      console.error('Error submitting product:', err);
       setMessage({ type: 'error', text: err.message });
     } finally {
       setIsSubmitting(false);
@@ -321,11 +369,18 @@ const AdminPage = ({ onOpenAuth }) => {
       {/* PRODUCTS TAB */}
       {adminTab === 'products' && (
         <div className="admin-grid">
-          {/* Left: Add Product Form */}
+          {/* Left: Add/Edit Product Form */}
           <div className="admin-card add-product-card">
-            <h3>Add New Product</h3>
+            <div className="admin-card-header-flex">
+              <h3>{editingProductId ? 'Edit Product Details' : 'Add New Product'}</h3>
+              {editingProductId && (
+                <button type="button" className="btn btn-secondary btn-sm" onClick={handleCancelEdit}>
+                  Cancel Edit
+                </button>
+              )}
+            </div>
 
-            <form onSubmit={handleAddProduct} className="admin-form">
+            <form onSubmit={handleSubmitProduct} className="admin-form">
               <div className="form-group">
                 <label className="form-label">Product Name *</label>
                 <input
@@ -365,6 +420,7 @@ const AdminPage = ({ onOpenAuth }) => {
                     <option value="Featured">Featured</option>
                     <option value="Trending">Trending</option>
                     <option value="Sale">Sale</option>
+                    <option value="">None</option>
                   </select>
                 </div>
               </div>
@@ -392,6 +448,47 @@ const AdminPage = ({ onOpenAuth }) => {
                     className="form-input"
                   />
                 </div>
+              </div>
+
+              {/* Rating, Reviews & Stock Status */}
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">Rating (1 to 5 Stars)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="1"
+                    max="5"
+                    placeholder="4.8"
+                    value={rating}
+                    onChange={(e) => setRating(e.target.value)}
+                    className="form-input"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Reviews Count</label>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder="12"
+                    value={reviewsCount}
+                    onChange={(e) => setReviewsCount(e.target.value)}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Availability / Stock Status</label>
+                <select
+                  value={inStock ? 'true' : 'false'}
+                  onChange={(e) => setInStock(e.target.value === 'true')}
+                  className="form-input"
+                >
+                  <option value="true">In Stock (Available for Purchase)</option>
+                  <option value="false">Out of Stock</option>
+                </select>
               </div>
 
               {/* Image Selection Tabs */}
@@ -463,9 +560,20 @@ const AdminPage = ({ onOpenAuth }) => {
                 ></textarea>
               </div>
 
-              <button type="submit" className="btn btn-primary submit-product-btn" disabled={isSubmitting}>
-                {isSubmitting ? <span className="spinner"></span> : 'Add Product to Store'}
-              </button>
+              <div className="form-submit-row">
+                <button type="submit" className="btn btn-primary submit-product-btn" disabled={isSubmitting}>
+                  {isSubmitting
+                    ? 'Saving...'
+                    : editingProductId
+                    ? 'Update Product Details'
+                    : 'Add Product to Store'}
+                </button>
+                {editingProductId && (
+                  <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
+                    Cancel
+                  </button>
+                )}
+              </div>
             </form>
           </div>
 
@@ -481,8 +589,9 @@ const AdminPage = ({ onOpenAuth }) => {
                   <thead>
                     <tr>
                       <th>Item</th>
-                      <th>Category</th>
+                      <th>Category & Stock</th>
                       <th>Price</th>
+                      <th>Rating</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -496,15 +605,39 @@ const AdminPage = ({ onOpenAuth }) => {
                             {prod.tag && <span className="badge badge-brand table-tag">{prod.tag}</span>}
                           </div>
                         </td>
-                        <td>{prod.category}</td>
-                        <td className="table-price">₹{prod.price.toLocaleString('en-IN')}</td>
                         <td>
+                          <div>{prod.category}</div>
+                          <span className={`stock-status-pill ${prod.inStock ? 'in-stock' : 'out-of-stock'}`}>
+                            {prod.inStock ? 'In Stock' : 'Out of Stock'}
+                          </span>
+                        </td>
+                        <td className="table-price">
+                          <div>₹{prod.price?.toLocaleString('en-IN')}</div>
+                          {prod.originalPrice && (
+                            <div className="original-price-strike">₹{prod.originalPrice?.toLocaleString('en-IN')}</div>
+                          )}
+                        </td>
+                        <td>
+                          <div className="rating-table-cell">
+                            <FiStar style={{ color: '#f59e0b', marginRight: '3px' }} />
+                            <span>{prod.rating !== undefined ? prod.rating : '4.8'}</span>
+                            <span className="muted"> ({prod.reviewsCount !== undefined ? prod.reviewsCount : '0'})</span>
+                          </div>
+                        </td>
+                        <td className="table-actions-cell">
+                          <button
+                            className="table-edit-btn"
+                            onClick={() => handleStartEdit(prod)}
+                            title="Edit Product"
+                          >
+                            <FiEdit /> Edit
+                          </button>
                           <button
                             className="table-delete-btn"
                             onClick={() => handleDeleteProduct(prod.id || prod._id)}
                             title="Delete Product"
                           >
-                            Delete
+                            <FiTrash2 />
                           </button>
                         </td>
                       </tr>

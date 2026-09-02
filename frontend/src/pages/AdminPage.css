@@ -329,6 +329,30 @@
   color: var(--pista-hover);
 }
 
+.table-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.table-edit-btn {
+  background: #e8f4fd;
+  color: #1976d2;
+  border: 1px solid #90caf9;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.table-edit-btn:hover {
+  background: #bbdefb;
+}
+
 .table-delete-btn {
   background: #ffe5ec;
   color: #d90429;
@@ -338,10 +362,77 @@
   font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .table-delete-btn:hover {
   background: #ffb3c1;
+}
+
+.admin-card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.75rem;
+}
+
+.admin-card-header-flex h3 {
+  margin-bottom: 0;
+}
+
+.form-submit-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.form-submit-row .submit-product-btn {
+  margin-top: 0;
+}
+
+.stock-status-pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+  margin-top: 0.2rem;
+}
+
+.stock-status-pill.in-stock {
+  background: #d8f3dc;
+  color: #1b4332;
+  border: 1px solid #b7e4c7;
+}
+
+.stock-status-pill.out-of-stock {
+  background: #ffe5ec;
+  color: #9d0208;
+  border: 1px solid #ffb3c1;
+}
+
+.original-price-strike {
+  font-size: 0.75rem;
+  text-decoration: line-through;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.rating-table-cell {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.rating-table-cell .muted {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.75rem;
 }
 
 /* Orders Table Styling */
