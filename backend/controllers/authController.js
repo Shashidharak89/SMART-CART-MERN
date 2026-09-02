@@ -17,7 +17,7 @@ const generateToken = (id) => {
 // @access  Public
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Please provide name, email, and password' });
@@ -34,11 +34,15 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User with this email already exists' });
     }
 
+    // Automatically assign admin role if email contains 'admin' or explicitly requested
+    const userRole = (role === 'admin' || email.toLowerCase().includes('admin')) ? 'admin' : 'user';
+
     // Create user
     const user = await User.create({
       name,
       email,
       password,
+      role: userRole,
     });
 
     if (user) {
@@ -46,6 +50,7 @@ const registerUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         token: generateToken(user._id),
       });
     } else {
@@ -76,6 +81,7 @@ const loginUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         token: generateToken(user._id),
       });
     } else {
@@ -96,6 +102,7 @@ const getMe = async (req, res) => {
       _id: req.user._id,
       name: req.user.name,
       email: req.user.email,
+      role: req.user.role,
     });
   } catch (error) {
     console.error('Error in getMe:', error);

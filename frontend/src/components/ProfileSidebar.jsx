@@ -30,7 +30,10 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
               {user ? user.name.charAt(0).toUpperCase() : 'G'}
             </div>
             <div className="sidebar-user-details">
-              <h3 className="sidebar-user-name">{user ? user.name : 'Guest User'}</h3>
+              <h3 className="sidebar-user-name">
+                {user ? user.name : 'Guest User'}
+                {user && user.role === 'admin' && <span className="badge badge-brand sidebar-role-badge">ADMIN</span>}
+              </h3>
               <p className="sidebar-user-email">{user ? user.email : 'Sign in to access your profile'}</p>
             </div>
           </div>
@@ -65,6 +68,18 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
             </button>
 
             <button
+              className={`sidebar-link ${location.pathname === '/admin-pannel' ? 'active' : ''}`}
+              onClick={() => handleNav('/admin-pannel')}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+              Admin Panel
+            </button>
+
+            <button
               className="sidebar-link"
               onClick={() => {
                 onClose();
@@ -72,7 +87,7 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
               }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <path d="M6 2L3 6v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6l-3-4z"></path>
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <path d="M16 10a4 4 0 0 1-8 0"></path>
               </svg>
@@ -87,8 +102,8 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
           {user ? (
             <div className="sidebar-account-menu">
               <div className="user-info-box">
+                <p><strong>Role:</strong> {user.role ? user.role.toUpperCase() : 'USER'}</p>
                 <p><strong>Member ID:</strong> #{user._id.slice(-6).toUpperCase()}</p>
-                <p><strong>Status:</strong> Active 7-Day Session</p>
               </div>
 
               <button className="sidebar-btn danger" onClick={handleLogout}>

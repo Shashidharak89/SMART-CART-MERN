@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import ProfileSidebar from './components/ProfileSidebar';
 import HomePage from './pages/HomePage';
 import ExploreProductsPage from './pages/ExploreProductsPage';
+import AdminPage from './pages/AdminPage';
 import AuthModal from './components/AuthModal';
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
@@ -102,6 +103,15 @@ function MainApp() {
                   searchQuery={searchQuery}
                 />
               }
+            />
+            {/* Admin Panel Route */}
+            <Route
+              path="/admin-pannel"
+              element={<AdminPage onOpenAuth={handleOpenAuth} />}
+            />
+            <Route
+              path="/admin-panel"
+              element={<AdminPage onOpenAuth={handleOpenAuth} />}
             />
           </Routes>
         </main>
