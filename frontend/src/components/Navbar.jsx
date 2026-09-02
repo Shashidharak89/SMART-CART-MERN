@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
-const Navbar = ({ cartCount, onOpenCart, onOpenAuth, searchQuery, setSearchQuery }) => {
-  const { user, logout } = useAuth();
-  const [showDropdown, setShowDropdown] = useState(false);
+const Navbar = ({ cartCount, onOpenCart, onOpenAuth, onOpenSidebar, searchQuery, setSearchQuery }) => {
+  const { user } = useAuth();
 
   return (
     <header className="navbar-header">
       <div className="container navbar-container">
         {/* Brand Logo */}
-        <a href="#" className="navbar-brand">
+        <Link to="/" className="navbar-brand">
           <div className="brand-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="9" cy="21" r="1"></circle>
@@ -19,7 +19,7 @@ const Navbar = ({ cartCount, onOpenCart, onOpenAuth, searchQuery, setSearchQuery
             </svg>
           </div>
           <span className="brand-text">SMART<span className="brand-highlight">CART</span></span>
-        </a>
+        </Link>
 
         {/* Search Bar */}
         <div className="navbar-search">
@@ -41,6 +41,11 @@ const Navbar = ({ cartCount, onOpenCart, onOpenAuth, searchQuery, setSearchQuery
 
         {/* Right Actions */}
         <div className="navbar-actions">
+          {/* Explore Link */}
+          <Link to="/products" className="nav-page-link">
+            Explore
+          </Link>
+
           {/* Cart Icon Button */}
           <button className="cart-btn" onClick={onOpenCart} title="View Shopping Cart">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -51,48 +56,32 @@ const Navbar = ({ cartCount, onOpenCart, onOpenAuth, searchQuery, setSearchQuery
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </button>
 
-          {/* User Auth state */}
+          {/* Profile Avatar / Menu Icon triggers Sidebar */}
           {user ? (
-            <div className="user-profile-menu">
-              <button
-                className="user-avatar-btn"
-                onClick={() => setShowDropdown(!showDropdown)}
-              >
-                <div className="avatar-circle">
-                  {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                </div>
-                <span className="user-name-display">{user.name.split(' ')[0]}</span>
-                <svg className={`chevron ${showDropdown ? 'open' : ''}`} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="6 9 12 15 18 9"></polyline>
+            <button className="user-avatar-btn" onClick={onOpenSidebar} title="Open Navigation Menu">
+              <div className="avatar-circle">
+                {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+              </div>
+              <span className="user-name-display">{user.name.split(' ')[0]}</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          ) : (
+            <div className="nav-guest-group">
+              <button className="btn btn-primary nav-auth-btn" onClick={() => onOpenAuth('login')}>
+                Sign In
+              </button>
+              <button className="sidebar-trigger-btn" onClick={onOpenSidebar} title="Open Menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
               </button>
-
-              {showDropdown && (
-                <div className="user-dropdown-menu fade-in">
-                  <div className="dropdown-header">
-                    <p className="dropdown-user-name">{user.name}</p>
-                    <p className="dropdown-user-email">{user.email}</p>
-                  </div>
-                  <div className="dropdown-divider"></div>
-                  <button className="dropdown-item danger" onClick={() => { logout(); setShowDropdown(false); }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                      <polyline points="16 17 21 12 16 7"></polyline>
-                      <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                    Logout
-                  </button>
-                </div>
-              )}
             </div>
-          ) : (
-            <button className="btn btn-primary nav-auth-btn" onClick={() => onOpenAuth('login')}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-              Sign In
-            </button>
           )}
         </div>
       </div>

@@ -1,0 +1,24 @@
+.explore-products-page {
+  min-height: 80vh;
+}
+
+.explore-hero-banner {
+  background: var(--cream-soft);
+  padding: 3.5rem 0 2.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.explore-page-title {
+  font-size: 2.75rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-main);
+}
+
+.explore-page-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 580px;
+  margin: 0 auto;
+}

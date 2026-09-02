@@ -95,6 +95,20 @@
   gap: 1rem;
 }
 
+.nav-page-link {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.nav-page-link:hover {
+  background: var(--cream-soft);
+  color: var(--pista-main);
+}
+
 .cart-btn {
   position: relative;
   width: 42px;
@@ -137,8 +151,27 @@
   border-radius: var(--radius-full);
 }
 
-.user-profile-menu {
-  position: relative;
+.nav-guest-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sidebar-trigger-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  background: var(--cream-soft);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-trigger-btn:hover {
+  background: var(--cream-accent);
+  border-color: var(--pista-main);
 }
 
 .user-avatar-btn {
@@ -173,70 +206,4 @@
 .user-name-display {
   font-weight: 600;
   font-size: 0.9rem;
-}
-
-.chevron {
-  transition: transform 0.2s ease;
-  color: var(--text-muted);
-}
-.chevron.open {
-  transform: rotate(180deg);
-}
-
-.user-dropdown-menu {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 8px);
-  width: 220px;
-  background: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  padding: 0.75rem;
-  z-index: 110;
-}
-
-.dropdown-header {
-  padding: 0.5rem 0.5rem;
-}
-
-.dropdown-user-name {
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--text-main);
-}
-
-.dropdown-user-email {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-.dropdown-divider {
-  height: 1px;
-  background: var(--border-color);
-  margin: 0.5rem 0;
-}
-
-.dropdown-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-align: left;
-}
-
-.dropdown-item:hover {
-  background: var(--pista-light);
-  color: var(--pista-hover);
-}
-
-.dropdown-item.danger:hover {
-  background: #ffe5ec;
-  color: #d90429;
 }

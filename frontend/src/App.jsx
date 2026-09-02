@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import TrendingSection from './components/TrendingSection';
-import ProductGrid from './components/ProductGrid';
+import ProfileSidebar from './components/ProfileSidebar';
+import HomePage from './pages/HomePage';
+import ExploreProductsPage from './pages/ExploreProductsPage';
 import AuthModal from './components/AuthModal';
 import CartDrawer from './components/CartDrawer';
 import Footer from './components/Footer';
@@ -11,24 +12,10 @@ import Footer from './components/Footer';
 function MainApp() {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
   const [searchQuery, setSearchQuery] = useState('');
-
-  const catalogRef = useRef(null);
-  const trendingRef = useRef(null);
-
-  const handleExploreClick = () => {
-    if (catalogRef.current) {
-      catalogRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleTrendingClick = () => {
-    if (trendingRef.current) {
-      trendingRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   const handleOpenAuth = (mode = 'login') => {
     setAuthMode(mode);
@@ -83,56 +70,70 @@ function MainApp() {
   const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <div className="app-root">
-      <Navbar
-        cartCount={totalCartCount}
-        onOpenCart={() => setIsCartOpen(true)}
-        onOpenAuth={handleOpenAuth}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
-
-      <main>
-        {/* Home Screen CTA Banner */}
-        <Hero
-          onExploreClick={handleExploreClick}
-          onTrendingClick={handleTrendingClick}
+    <Router>
+      <div className="app-root">
+        {/* Navigation Bar */}
+        <Navbar
+          cartCount={totalCartCount}
+          onOpenCart={() => setIsCartOpen(true)}
           onOpenAuth={handleOpenAuth}
-        />
-
-        {/* Trending Products Section */}
-        <TrendingSection
-          onAddToCart={handleAddToCart}
-          trendingRef={trendingRef}
-        />
-
-        {/* All Products Exploration Section */}
-        <ProductGrid
-          onAddToCart={handleAddToCart}
+          onOpenSidebar={() => setIsSidebarOpen(true)}
           searchQuery={searchQuery}
-          gridRef={catalogRef}
+          setSearchQuery={setSearchQuery}
         />
-      </main>
 
-      <Footer />
+        {/* Route Views */}
+        <main>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  onAddToCart={handleAddToCart}
+                  onOpenAuth={handleOpenAuth}
+                />
+              }
+            />
+            <Route
+              path="/products"
+              element={
+                <ExploreProductsPage
+                  onAddToCart={handleAddToCart}
+                  searchQuery={searchQuery}
+                />
+              }
+            />
+          </Routes>
+        </main>
 
-      {/* Auth Modal (Login / Register) */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        initialMode={authMode}
-      />
+        <Footer />
 
-      {/* Slide-over Cart Drawer */}
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cartItems={cartItems}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
-        onClearCart={handleClearCart}
-      />
-    </div>
+        {/* Profile / Navigation Sidebar Drawer */}
+        <ProfileSidebar
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+          onOpenAuth={handleOpenAuth}
+          onOpenCart={() => setIsCartOpen(true)}
+        />
+
+        {/* Auth Modal (Login / Register) */}
+        <AuthModal
+          isOpen={isAuthOpen}
+          onClose={() => setIsAuthOpen(false)}
+          initialMode={authMode}
+        />
+
+        {/* Slide-over Cart Drawer */}
+        <CartDrawer
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          cartItems={cartItems}
+          onUpdateQuantity={handleUpdateQuantity}
+          onRemoveItem={handleRemoveItem}
+          onClearCart={handleClearCart}
+        />
+      </div>
+    </Router>
   );
 }
 
