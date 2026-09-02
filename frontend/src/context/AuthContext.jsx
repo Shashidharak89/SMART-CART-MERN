@@ -66,6 +66,8 @@ export const AuthProvider = ({ children }) => {
         _id: data._id,
         name: data.name,
         email: data.email,
+        role: data.role,
+        address: data.address || {},
       });
 
       return { success: true };
@@ -99,9 +101,45 @@ export const AuthProvider = ({ children }) => {
         _id: data._id,
         name: data.name,
         email: data.email,
+        role: data.role,
+        address: data.address || {},
       });
 
       return { success: true };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, message: err.message };
+    }
+  };
+
+  // Update profile / address function
+  const updateProfile = async (profileData) => {
+    setError(null);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to update profile');
+      }
+
+      setUser({
+        _id: data._id,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        address: data.address || {},
+      });
+
+      return { success: true, user: data };
     } catch (err) {
       setError(err.message);
       return { success: false, message: err.message };
@@ -127,6 +165,7 @@ export const AuthProvider = ({ children }) => {
         error,
         register,
         login,
+        updateProfile,
         logout,
         clearError,
       }}

@@ -51,6 +51,7 @@ const registerUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        address: user.address,
         token: generateToken(user._id),
       });
     } else {
@@ -82,6 +83,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        address: user.address,
         token: generateToken(user._id),
       });
     } else {
@@ -103,6 +105,7 @@ const getMe = async (req, res) => {
       name: req.user.name,
       email: req.user.email,
       role: req.user.role,
+      address: req.user.address,
     });
   } catch (error) {
     console.error('Error in getMe:', error);
@@ -110,8 +113,51 @@ const getMe = async (req, res) => {
   }
 };
 
+// @desc    Update user profile & address
+// @route   PUT /api/auth/profile
+// @access  Private
+const updateUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      user.name = req.body.name || user.name;
+      if (req.body.password) {
+        user.password = req.body.password;
+      }
+      if (req.body.address) {
+        user.address = {
+          street: req.body.address.street !== undefined ? req.body.address.street : user.address?.street,
+          city: req.body.address.city !== undefined ? req.body.address.city : user.address?.city,
+          state: req.body.address.state !== undefined ? req.body.address.state : user.address?.state,
+          zipCode: req.body.address.zipCode !== undefined ? req.body.address.zipCode : user.address?.zipCode,
+          country: req.body.address.country !== undefined ? req.body.address.country : (user.address?.country || 'India'),
+          phone: req.body.address.phone !== undefined ? req.body.address.phone : user.address?.phone,
+        };
+      }
+
+      const updatedUser = await user.save();
+
+      res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        address: updatedUser.address,
+        token: generateToken(updatedUser._id),
+      });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error in updateUserProfile:', error);
+    res.status(500).json({ message: error.message || 'Server error updating profile' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getMe,
+  updateUserProfile,
 };
