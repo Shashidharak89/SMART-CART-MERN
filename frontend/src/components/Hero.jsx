@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FiTrendingUp, FiStar, FiZap, FiGift } from 'react-icons/fi';
+import heroBg from '../assets/bg-smartcart-herosection.png';
 import gsap from 'gsap';
 import './Hero.css';
 
@@ -31,6 +32,12 @@ const Hero = ({ onExploreClick, onTrendingClick, onOpenAuth }) => {
 
   return (
     <section className="hero-section" ref={heroRef}>
+      {/* Background Image Layer with Faded Bottom Corner */}
+      <div
+        className="hero-bg-overlay"
+        style={{ backgroundImage: `url(${heroBg})` }}
+      ></div>
+
       <div className="container hero-container">
         {/* Home Screen CTA Text Content */}
         <div className="hero-content">
