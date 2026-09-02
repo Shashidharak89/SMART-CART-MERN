@@ -5,8 +5,8 @@
   width: 100%;
   z-index: 100;
   background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   padding: 0.85rem 0;
   transition: var(--transition);
@@ -34,18 +34,16 @@
   width: 38px;
   height: 38px;
   border-radius: var(--radius-md);
-  background: var(--gradient-brand);
+  background: var(--pista-main);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 12px rgba(88, 129, 87, 0.25);
 }
 
 .brand-highlight {
-  background: var(--gradient-brand);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--pista-main);
 }
 
 .navbar-search {
@@ -65,7 +63,7 @@
 .search-input {
   width: 100%;
   padding: 0.65rem 2.5rem 0.65rem 2.75rem;
-  background: rgba(17, 24, 39, 0.6);
+  background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-full);
   color: var(--text-main);
@@ -75,9 +73,9 @@
 
 .search-input:focus {
   outline: none;
-  background: rgba(17, 24, 39, 0.95);
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  background: #ffffff;
+  border-color: var(--pista-main);
+  box-shadow: 0 0 0 3px rgba(88, 129, 87, 0.15);
 }
 
 .clear-search {
@@ -102,7 +100,7 @@
   width: 42px;
   height: 42px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--cream-soft);
   border: 1px solid var(--border-color);
   color: var(--text-main);
   display: flex;
@@ -111,16 +109,16 @@
 }
 
 .cart-btn:hover {
-  background: rgba(99, 102, 241, 0.15);
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
+  background: var(--pista-light);
+  border-color: var(--pista-main);
+  color: var(--pista-main);
 }
 
 .cart-badge {
   position: absolute;
   top: -4px;
   right: -4px;
-  background: var(--accent-rose);
+  background: var(--pista-main);
   color: white;
   font-size: 0.7rem;
   font-weight: 800;
@@ -130,6 +128,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 6px rgba(88, 129, 87, 0.3);
 }
 
 .nav-auth-btn {
@@ -147,22 +146,22 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.35rem 0.75rem 0.35rem 0.35rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--cream-soft);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-full);
   color: var(--text-main);
 }
 
 .user-avatar-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--border-highlight);
+  background: var(--cream-accent);
+  border-color: var(--pista-main);
 }
 
 .avatar-circle {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
-  background: var(--gradient-brand);
+  background: var(--pista-main);
   color: white;
   font-weight: 700;
   font-size: 0.85rem;
@@ -189,7 +188,7 @@
   right: 0;
   top: calc(100% + 8px);
   width: 220px;
-  background: var(--bg-secondary);
+  background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -233,11 +232,11 @@
 }
 
 .dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-main);
+  background: var(--pista-light);
+  color: var(--pista-hover);
 }
 
 .dropdown-item.danger:hover {
-  background: rgba(244, 63, 94, 0.15);
-  color: var(--accent-rose);
+  background: #ffe5ec;
+  color: #d90429;
 }

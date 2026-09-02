@@ -20,7 +20,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(17, 24, 39, 0.6);
+  background: var(--cream-soft);
   padding: 0.35rem;
   border-radius: var(--radius-full);
   border: 1px solid var(--border-color);
@@ -31,20 +31,22 @@
   padding: 0.5rem 1.25rem;
   border-radius: var(--radius-full);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
   background: transparent;
   white-space: nowrap;
+  transition: var(--transition);
 }
 
 .tab-btn:hover {
   color: var(--text-main);
+  background: var(--cream-accent);
 }
 
 .tab-btn.active {
-  background: var(--gradient-brand);
+  background: var(--pista-main);
   color: white;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 12px rgba(88, 129, 87, 0.25);
 }
 
 .products-grid {
@@ -61,22 +63,22 @@
 
 .skeleton-card {
   height: 380px;
-  background: rgba(17, 24, 39, 0.6);
+  background: #ffffff;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   animation: shimmer 1.5s infinite linear;
 }
 
 @keyframes shimmer {
-  0% { opacity: 0.5; }
+  0% { opacity: 0.6; }
   50% { opacity: 0.9; }
-  100% { opacity: 0.5; }
+  100% { opacity: 0.6; }
 }
 
 .empty-products {
   text-align: center;
   padding: 5rem 1rem;
-  background: var(--bg-card);
+  background: #ffffff;
   border: 1px dashed var(--border-color);
   border-radius: var(--radius-lg);
   color: var(--text-muted);
@@ -85,7 +87,7 @@
 }
 
 .empty-products svg {
-  color: var(--text-subtle);
+  color: var(--pista-main);
   margin-bottom: 1rem;
 }
 

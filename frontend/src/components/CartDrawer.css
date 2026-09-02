@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(31, 46, 38, 0.4);
   backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex;
@@ -15,7 +15,7 @@
   width: 100%;
   max-width: 440px;
   height: 100%;
-  background: var(--bg-secondary);
+  background: #ffffff;
   border-left: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
@@ -41,7 +41,7 @@
 }
 
 .cart-close-btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--cream-soft);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
   width: 32px;
@@ -54,7 +54,7 @@
 }
 
 .cart-close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--cream-accent);
   color: var(--text-main);
 }
 
@@ -96,7 +96,7 @@
   display: flex;
   gap: 1rem;
   padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .cart-item-image {
@@ -104,7 +104,7 @@
   height: 72px;
   border-radius: var(--radius-sm);
   object-fit: cover;
-  background: #1f2937;
+  background: var(--cream-soft);
 }
 
 .cart-item-info {
@@ -123,7 +123,7 @@
 
 .cart-item-price {
   font-weight: 700;
-  color: var(--accent-primary);
+  color: var(--pista-main);
   font-size: 0.95rem;
   margin-bottom: 0.5rem;
 }
@@ -137,7 +137,7 @@
 .qty-picker {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--cream-soft);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
 }
@@ -152,7 +152,7 @@
 }
 
 .qty-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--cream-accent);
 }
 
 .qty-value {
@@ -169,12 +169,12 @@
 }
 
 .remove-item-btn:hover {
-  color: var(--accent-rose);
+  color: #d90429;
 }
 
 .cart-footer {
   padding: 1.5rem;
-  background: rgba(17, 24, 39, 0.95);
+  background: var(--bg-primary);
   border-top: 1px solid var(--border-color);
 }
 
@@ -192,7 +192,7 @@
 }
 
 .free-tag {
-  color: var(--accent-emerald);
+  color: var(--pista-hover);
   font-weight: 800;
 }
 
@@ -209,7 +209,7 @@
 }
 
 .total-val {
-  color: var(--accent-primary);
+  color: var(--pista-main);
 }
 
 .checkout-btn {
@@ -227,9 +227,9 @@
   width: 64px;
   height: 64px;
   border-radius: var(--radius-full);
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--accent-emerald);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: var(--pista-badge);
+  color: var(--pista-hover);
+  border: 1px solid rgba(88, 129, 87, 0.3);
   font-size: 2rem;
   font-weight: 900;
   display: flex;

@@ -4,9 +4,9 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(31, 46, 38, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +18,7 @@
   position: relative;
   width: 100%;
   max-width: 440px;
-  background: var(--bg-secondary);
+  background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 2.25rem 2rem;
@@ -29,7 +29,7 @@
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--cream-soft);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
   width: 32px;
@@ -42,7 +42,7 @@
 }
 
 .auth-close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--cream-accent);
   color: var(--text-main);
 }
 
@@ -55,13 +55,13 @@
   width: 48px;
   height: 48px;
   border-radius: var(--radius-md);
-  background: var(--gradient-brand);
+  background: var(--pista-main);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem auto;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 14px rgba(88, 129, 87, 0.25);
 }
 
 .auth-header h2 {
@@ -76,7 +76,7 @@
 
 .auth-tabs {
   display: flex;
-  background: rgba(17, 24, 39, 0.8);
+  background: var(--cream-soft);
   padding: 0.25rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
@@ -87,7 +87,7 @@
   flex: 1;
   padding: 0.65rem 0;
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.9rem;
   color: var(--text-muted);
   background: transparent;
@@ -96,9 +96,9 @@
 }
 
 .auth-tab.active {
-  background: rgba(99, 102, 241, 0.2);
-  color: #818cf8;
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: var(--pista-badge);
+  color: var(--pista-hover);
+  border: 1px solid rgba(88, 129, 87, 0.3);
 }
 
 .auth-error-banner {
@@ -106,10 +106,10 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.75rem 1rem;
-  background: rgba(244, 63, 94, 0.12);
-  border: 1px solid rgba(244, 63, 94, 0.3);
+  background: #ffe5ec;
+  border: 1px solid #ffb3c1;
   border-radius: var(--radius-md);
-  color: #fb7185;
+  color: #9d0208;
   font-size: 0.85rem;
   margin-bottom: 1.25rem;
 }
@@ -124,7 +124,7 @@
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
-  color: var(--accent-primary);
+  color: var(--pista-main);
   font-size: 0.8rem;
   font-weight: 700;
   padding: 0.25rem 0.5rem;
@@ -145,7 +145,7 @@
 
 .switch-link {
   background: transparent;
-  color: var(--accent-primary);
+  color: var(--pista-main);
   font-weight: 700;
   font-size: 0.875rem;
   text-decoration: underline;
