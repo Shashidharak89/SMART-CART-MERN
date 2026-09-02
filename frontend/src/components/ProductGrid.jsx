@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
+import { API_BASE_URL } from '../config/api';
 import './ProductGrid.css';
 
 const categories = ['All', 'Electronics', 'Fashion', 'Home & Living'];
@@ -21,7 +22,7 @@ const ProductGrid = ({ onAddToCart, searchQuery, gridRef }) => {
           queryParams.append('search', searchQuery);
         }
 
-        const res = await fetch(`/api/products?${queryParams.toString()}`);
+        const res = await fetch(`${API_BASE_URL}/api/products?${queryParams.toString()}`);
         if (res.ok) {
           const data = await res.json();
           setProducts(data);
