@@ -1,11 +1,14 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Helper to generate JWT token
+// Helper to generate JWT token (valid for 7 days)
 const generateToken = (id) => {
-  const secret = process.env.JWT_SECRET || 'secret123';
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET is missing in environment variables');
+  }
   return jwt.sign({ id }, secret, {
-    expiresIn: '30d',
+    expiresIn: '7d',
   });
 };
 
@@ -84,7 +87,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-// @desc    Get current user data
+// @desc    Get current user data (7-day session validity)
 // @route   GET /api/auth/me
 // @access  Private
 const getMe = async (req, res) => {
