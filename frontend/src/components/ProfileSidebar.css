@@ -443,6 +443,28 @@
   font-size: 0.75rem;
 }
 
+.order-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cancel-order-btn {
+  background: #ffe5ec;
+  color: #d90429;
+  border: 1px solid #ffb3c1;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-order-btn:hover {
+  background: #ffb3c1;
+}
+
 .no-orders-box,
 .loading-spinner-box {
   text-align: center;

@@ -138,6 +138,7 @@ const getProducts = async (req, res) => {
       image: p.image,
       description: p.description,
       tag: p.tag,
+      countInStock: p.countInStock !== undefined ? p.countInStock : 20,
       inStock: p.inStock,
     }));
 
@@ -153,7 +154,7 @@ const getProducts = async (req, res) => {
 // @access  Private/Admin
 const createProduct = async (req, res) => {
   try {
-    const { name, category, price, originalPrice, rating, reviewsCount, description, tag, inStock, imageUrl } = req.body;
+    const { name, category, price, originalPrice, rating, reviewsCount, description, tag, countInStock, inStock, imageUrl } = req.body;
 
     let finalImageUrl = imageUrl;
 
@@ -174,6 +175,8 @@ const createProduct = async (req, res) => {
       });
     }
 
+    const initialStockCount = countInStock !== undefined && countInStock !== '' ? Number(countInStock) : 20;
+
     const product = await Product.create({
       name,
       category,
@@ -181,7 +184,8 @@ const createProduct = async (req, res) => {
       originalPrice: originalPrice ? Number(originalPrice) : undefined,
       rating: rating !== undefined ? Number(rating) : 4.8,
       reviewsCount: reviewsCount !== undefined ? Number(reviewsCount) : 12,
-      inStock: inStock !== undefined ? (inStock === true || inStock === 'true') : true,
+      countInStock: initialStockCount,
+      inStock: inStock !== undefined ? (inStock === true || inStock === 'true') : (initialStockCount > 0),
       image: finalImageUrl,
       description,
       tag: tag || 'New Arrival',
@@ -198,6 +202,7 @@ const createProduct = async (req, res) => {
       image: product.image,
       description: product.description,
       tag: product.tag,
+      countInStock: product.countInStock,
       inStock: product.inStock,
     });
   } catch (error) {
@@ -226,6 +231,7 @@ const updateProduct = async (req, res) => {
       reviewsCount,
       description,
       tag,
+      countInStock,
       inStock,
       imageUrl,
     } = req.body;
@@ -256,6 +262,10 @@ const updateProduct = async (req, res) => {
     if (reviewsCount !== undefined && reviewsCount !== '') {
       product.reviewsCount = Number(reviewsCount);
     }
+    if (countInStock !== undefined && countInStock !== '') {
+      product.countInStock = Number(countInStock);
+      product.inStock = product.countInStock > 0;
+    }
     if (inStock !== undefined) {
       product.inStock = (inStock === true || inStock === 'true');
     }
@@ -276,6 +286,7 @@ const updateProduct = async (req, res) => {
       image: updatedProduct.image,
       description: updatedProduct.description,
       tag: updatedProduct.tag,
+      countInStock: updatedProduct.countInStock,
       inStock: updatedProduct.inStock,
     });
   } catch (error) {

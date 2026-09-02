@@ -104,6 +104,32 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
     }
   };
 
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm('Are you sure you want to cancel this order? Quantities will be restored to store inventory.')) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/orders/${orderId}/cancel`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setOrders(orders.map((o) => (o._id === orderId ? data : o)));
+      } else {
+        alert(data.message || 'Failed to cancel order');
+      }
+    } catch (err) {
+      console.error('Error cancelling order:', err);
+      alert('Error cancelling order');
+    }
+  };
+
   const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'Delivered':
@@ -429,7 +455,18 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
                           <span>Total Amount</span>
                           <strong>₹{order.totalPrice.toLocaleString('en-IN')}</strong>
                         </div>
-                        <span className="payment-tag">{order.paymentMethod}</span>
+                        <div className="order-footer-actions">
+                          <span className="payment-tag">{order.paymentMethod}</span>
+                          {order.status !== 'Cancelled' && order.status !== 'Delivered' && (
+                            <button
+                              className="cancel-order-btn"
+                              onClick={() => handleCancelOrder(order._id)}
+                              title="Cancel this order"
+                            >
+                              Cancel Order
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}

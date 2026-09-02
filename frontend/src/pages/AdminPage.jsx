@@ -19,6 +19,7 @@ const AdminPage = ({ onOpenAuth }) => {
   const [originalPrice, setOriginalPrice] = useState('');
   const [rating, setRating] = useState('4.8');
   const [reviewsCount, setReviewsCount] = useState('12');
+  const [countInStock, setCountInStock] = useState('20');
   const [inStock, setInStock] = useState(true);
   const [tag, setTag] = useState('New Arrival');
   const [description, setDescription] = useState('');
@@ -45,6 +46,7 @@ const AdminPage = ({ onOpenAuth }) => {
     setOriginalPrice('');
     setRating('4.8');
     setReviewsCount('12');
+    setCountInStock('20');
     setInStock(true);
     setTag('New Arrival');
     setDescription('');
@@ -63,6 +65,7 @@ const AdminPage = ({ onOpenAuth }) => {
     setOriginalPrice(prod.originalPrice !== undefined ? prod.originalPrice : '');
     setRating(prod.rating !== undefined ? prod.rating : '4.8');
     setReviewsCount(prod.reviewsCount !== undefined ? prod.reviewsCount : '12');
+    setCountInStock(prod.countInStock !== undefined ? prod.countInStock : '20');
     setInStock(prod.inStock !== false);
     setTag(prod.tag || 'New Arrival');
     setDescription(prod.description || '');
@@ -190,6 +193,7 @@ const AdminPage = ({ onOpenAuth }) => {
         if (originalPrice !== '') formData.append('originalPrice', originalPrice);
         formData.append('rating', rating);
         formData.append('reviewsCount', reviewsCount);
+        formData.append('countInStock', countInStock);
         formData.append('inStock', inStock);
         formData.append('tag', tag);
         formData.append('description', description);
@@ -216,6 +220,7 @@ const AdminPage = ({ onOpenAuth }) => {
             originalPrice: originalPrice !== '' ? originalPrice : undefined,
             rating,
             reviewsCount,
+            countInStock,
             inStock,
             tag,
             description,
@@ -479,16 +484,38 @@ const AdminPage = ({ onOpenAuth }) => {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Availability / Stock Status</label>
-                <select
-                  value={inStock ? 'true' : 'false'}
-                  onChange={(e) => setInStock(e.target.value === 'true')}
-                  className="form-input"
-                >
-                  <option value="true">In Stock (Available for Purchase)</option>
-                  <option value="false">Out of Stock</option>
-                </select>
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">Stock Quantity (Count)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder="20"
+                    value={countInStock}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCountInStock(val);
+                      if (val !== '' && Number(val) <= 0) {
+                        setInStock(false);
+                      } else if (val !== '' && Number(val) > 0) {
+                        setInStock(true);
+                      }
+                    }}
+                    className="form-input"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Availability / Status</label>
+                  <select
+                    value={inStock ? 'true' : 'false'}
+                    onChange={(e) => setInStock(e.target.value === 'true')}
+                    className="form-input"
+                  >
+                    <option value="true">In Stock (Available)</option>
+                    <option value="false">Out of Stock</option>
+                  </select>
+                </div>
               </div>
 
               {/* Image Selection Tabs */}
@@ -608,7 +635,9 @@ const AdminPage = ({ onOpenAuth }) => {
                         <td>
                           <div>{prod.category}</div>
                           <span className={`stock-status-pill ${prod.inStock ? 'in-stock' : 'out-of-stock'}`}>
-                            {prod.inStock ? 'In Stock' : 'Out of Stock'}
+                            {prod.inStock
+                              ? `In Stock (${prod.countInStock !== undefined ? prod.countInStock : 20})`
+                              : 'Out of Stock'}
                           </span>
                         </td>
                         <td className="table-price">

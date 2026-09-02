@@ -40,6 +40,11 @@ const productSchema = new mongoose.Schema(
       enum: ['Best Seller', 'Sale', 'Featured', 'New Arrival', 'Trending', ''],
       default: 'New Arrival',
     },
+    countInStock: {
+      type: Number,
+      default: 20,
+      min: 0,
+    },
     inStock: {
       type: Boolean,
       default: true,
