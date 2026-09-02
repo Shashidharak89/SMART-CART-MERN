@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ProductCard from './ProductCard';
 import { API_BASE_URL } from '../config/api';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './ProductGrid.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const categories = ['All', 'Electronics', 'Fashion', 'Home & Living'];
 
@@ -9,6 +13,7 @@ const ProductGrid = ({ onAddToCart, searchQuery, gridRef }) => {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [loading, setLoading] = useState(true);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -37,14 +42,36 @@ const ProductGrid = ({ onAddToCart, searchQuery, gridRef }) => {
     fetchProducts();
   }, [selectedCategory, searchQuery]);
 
+  useEffect(() => {
+    if (!loading && products.length > 0 && containerRef.current) {
+      const cards = containerRef.current.children;
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    }
+  }, [loading, products]);
+
   return (
     <section className="product-grid-section" ref={gridRef} id="catalog">
       <div className="container">
         {/* Section Header */}
         <div className="grid-header">
           <div>
-            <span className="badge badge-brand">Curated Selection</span>
-            <h2 className="grid-title">Featured Products</h2>
+            <span className="badge badge-brand">Explore Collection</span>
+            <h2 className="grid-title">All Products</h2>
           </div>
 
           {/* Category Tabs */}
@@ -69,7 +96,7 @@ const ProductGrid = ({ onAddToCart, searchQuery, gridRef }) => {
             ))}
           </div>
         ) : products.length > 0 ? (
-          <div className="products-grid fade-in">
+          <div className="products-grid" ref={containerRef}>
             {products.map((product) => (
               <ProductCard
                 key={product.id}

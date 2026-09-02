@@ -1,43 +1,72 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import gsap from 'gsap';
 import './Hero.css';
 
-const Hero = ({ onExploreClick, onOpenAuth }) => {
+const Hero = ({ onExploreClick, onTrendingClick, onOpenAuth }) => {
   const { user } = useAuth();
+  const heroRef = useRef(null);
+  const badgeRef = useRef(null);
+  const titleRef = useRef(null);
+  const descRef = useRef(null);
+  const ctaRef = useRef(null);
+  const statsRef = useRef(null);
+  const visualRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      tl.fromTo(badgeRef.current, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6 })
+        .fromTo(titleRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8 }, '-=0.3')
+        .fromTo(descRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
+        .fromTo(ctaRef.current?.children || [], { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.5, stagger: 0.15 }, '-=0.3')
+        .fromTo(statsRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, '-=0.3')
+        .fromTo(visualRef.current, { opacity: 0, x: 40, scale: 0.95 }, { opacity: 1, x: 0, scale: 1, duration: 1 }, '-=0.8');
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="hero-section">
+    <section className="hero-section" ref={heroRef}>
       <div className="container hero-container">
-        {/* Left Text Content */}
-        <div className="hero-content fade-in">
-          <div className="badge badge-brand hero-badge">
-            <span className="badge-pulse"></span> Summer Collection 2026
+        {/* Home Screen CTA Text Content */}
+        <div className="hero-content">
+          <div className="badge badge-brand hero-badge" ref={badgeRef}>
+            <span className="badge-pulse"></span> Exclusive Deals 2026
           </div>
-          <h1 className="hero-title">
-            Discover Next-Gen <br />
-            <span className="text-gradient">Innovations</span> for Living.
+          <h1 className="hero-title" ref={titleRef}>
+            Elevate Your Lifestyle with <br />
+            <span className="text-gradient">Premium Essentials</span>.
           </h1>
-          <p className="hero-description">
-            Experience curated tech essentials, premium fashion, and modern home accessories with express delivery and guaranteed satisfaction.
+          <p className="hero-description" ref={descRef}>
+            Discover handcrafted quality, tech innovations, and luxury accessories curated for modern living. Explore products below or shop trending picks.
           </p>
 
-          <div className="hero-cta">
+          {/* CTA Buttons */}
+          <div className="hero-cta" ref={ctaRef}>
             <button className="btn btn-primary hero-btn" onClick={onExploreClick}>
-              Explore Collection
+              Explore Products
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
             </button>
+
+            <button className="btn btn-secondary hero-btn" onClick={onTrendingClick}>
+              🔥 Trending Items
+            </button>
+
             {!user && (
               <button className="btn btn-secondary hero-btn" onClick={() => onOpenAuth('register')}>
-                Create Account
+                Sign Up
               </button>
             )}
           </div>
 
           {/* Stats Bar */}
-          <div className="hero-stats">
+          <div className="hero-stats" ref={statsRef}>
             <div className="stat-item">
               <span className="stat-number">15K+</span>
               <span className="stat-label">Happy Clients</span>
@@ -55,8 +84,8 @@ const Hero = ({ onExploreClick, onOpenAuth }) => {
           </div>
         </div>
 
-        {/* Right Visual Graphic */}
-        <div className="hero-visual fade-in">
+        {/* Right Visual Banner */}
+        <div className="hero-visual" ref={visualRef}>
           <div className="visual-card-wrapper">
             <img
               src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80"
@@ -71,10 +100,10 @@ const Hero = ({ onExploreClick, onOpenAuth }) => {
               </div>
             </div>
             <div className="floating-card floating-bottom-right">
-              <div className="floating-icon">🔥</div>
+              <div className="floating-icon">🎁</div>
               <div>
-                <p className="floating-title">Save Up To</p>
-                <p className="floating-subtitle">30% OFF Today</p>
+                <p className="floating-title">Free Express</p>
+                <p className="floating-subtitle">Shipping Available</p>
               </div>
             </div>
           </div>

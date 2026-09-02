@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import TrendingSection from './components/TrendingSection';
 import ProductGrid from './components/ProductGrid';
 import AuthModal from './components/AuthModal';
 import CartDrawer from './components/CartDrawer';
@@ -15,10 +16,17 @@ function MainApp() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const catalogRef = useRef(null);
+  const trendingRef = useRef(null);
 
   const handleExploreClick = () => {
     if (catalogRef.current) {
       catalogRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleTrendingClick = () => {
+    if (trendingRef.current) {
+      trendingRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -85,11 +93,20 @@ function MainApp() {
       />
 
       <main>
+        {/* Home Screen CTA Banner */}
         <Hero
           onExploreClick={handleExploreClick}
+          onTrendingClick={handleTrendingClick}
           onOpenAuth={handleOpenAuth}
         />
 
+        {/* Trending Products Section */}
+        <TrendingSection
+          onAddToCart={handleAddToCart}
+          trendingRef={trendingRef}
+        />
+
+        {/* All Products Exploration Section */}
         <ProductGrid
           onAddToCart={handleAddToCart}
           searchQuery={searchQuery}
