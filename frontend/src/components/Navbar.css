@@ -9,7 +9,12 @@
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   padding: 0.85rem 0;
-  transition: var(--transition);
+  /* Transition covers background, border, AND color for smooth dark-mode flip */
+  transition:
+    background 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navbar-container {
@@ -202,3 +207,111 @@
   font-weight: 600;
   font-size: 0.9rem;
 }
+
+/* ============================================================
+   DARK NAVBAR MODE  — toggled by GSAP ScrollTrigger when the
+   viewport scrolls into a dark-background section
+   ============================================================ */
+
+/* Base dark state — background flips to deep dark warm */
+.navbar-header.navbar--dark {
+  background: rgba(22, 27, 24, 0.96);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Brand text & highlight */
+.navbar--dark .navbar-brand {
+  color: #f4ede2;
+  transition: color 0.45s ease;
+}
+.navbar--dark .brand-text {
+  color: #f4ede2;
+}
+.navbar--dark .brand-highlight {
+  color: #a3c585;
+}
+
+/* Search bar */
+.navbar--dark .search-input {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f4ede2;
+  transition: background 0.45s ease, border-color 0.45s ease, color 0.45s ease;
+}
+.navbar--dark .search-input::placeholder {
+  color: rgba(244, 237, 226, 0.35);
+}
+.navbar--dark .search-input:focus {
+  background: rgba(88, 129, 87, 0.1);
+  border-color: #588157;
+  box-shadow: 0 0 0 3px rgba(88, 129, 87, 0.2);
+}
+.navbar--dark .search-icon {
+  color: rgba(244, 237, 226, 0.4);
+}
+.navbar--dark .clear-search {
+  color: rgba(244, 237, 226, 0.5);
+}
+
+/* Nav page links */
+.navbar--dark .nav-page-link {
+  color: rgba(244, 237, 226, 0.8);
+  transition: color 0.3s ease, background 0.3s ease;
+}
+.navbar--dark .nav-page-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #a3c585;
+}
+
+/* Cart button */
+.navbar--dark .cart-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(244, 237, 226, 0.85);
+  transition: background 0.45s ease, border-color 0.45s ease, color 0.45s ease;
+}
+.navbar--dark .cart-btn:hover {
+  background: rgba(88, 129, 87, 0.2);
+  border-color: #588157;
+  color: #a3c585;
+}
+
+/* User avatar button */
+.navbar--dark .user-avatar-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(244, 237, 226, 0.85);
+  transition: background 0.45s ease, border-color 0.45s ease, color 0.45s ease;
+}
+.navbar--dark .user-avatar-btn:hover {
+  background: rgba(88, 129, 87, 0.2);
+  border-color: #588157;
+}
+.navbar--dark .user-name-display {
+  color: #f4ede2;
+}
+
+/* Sidebar / hamburger trigger */
+.navbar--dark .sidebar-trigger-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(244, 237, 226, 0.85);
+  transition: background 0.45s ease, border-color 0.45s ease, color 0.45s ease;
+}
+.navbar--dark .sidebar-trigger-btn:hover {
+  background: rgba(88, 129, 87, 0.2);
+  border-color: #588157;
+}
+
+/* Sign In btn (outlined style on dark) */
+.navbar--dark .btn-primary.nav-auth-btn {
+  background: #588157;
+  color: #ffffff;
+  border-color: #588157;
+}
+.navbar--dark .btn-primary.nav-auth-btn:hover {
+  background: #a3c585;
+  border-color: #a3c585;
+}
+

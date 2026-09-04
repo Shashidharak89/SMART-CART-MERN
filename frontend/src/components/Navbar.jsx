@@ -1,14 +1,52 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logoImg from '../assets/SmartCart-logo.png';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './Navbar.css';
+
+gsap.registerPlugin(ScrollTrigger);
+
+// IDs of sections that have a dark background
+const DARK_SECTION_IDS = [
+  'section-stats-banner',
+  'section-app-speciality',
+  'section-newsletter',
+];
 
 const Navbar = ({ cartCount, onOpenCart, onOpenAuth, onOpenSidebar, searchQuery, setSearchQuery }) => {
   const { user } = useAuth();
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const triggers = [];
+
+    DARK_SECTION_IDS.forEach(id => {
+      const section = document.getElementById(id);
+      if (!section) return;
+
+      const st = ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',      // section top hits the very top of viewport (= bottom of fixed navbar)
+        end: 'bottom top',     // section bottom clears the navbar
+        onEnter: () => header.classList.add('navbar--dark'),
+        onLeave: () => header.classList.remove('navbar--dark'),
+        onEnterBack: () => header.classList.add('navbar--dark'),
+        onLeaveBack: () => header.classList.remove('navbar--dark'),
+      });
+
+      triggers.push(st);
+    });
+
+    return () => triggers.forEach(t => t.kill());
+  }, []);
 
   return (
-    <header className="navbar-header">
+    <header className="navbar-header" ref={headerRef}>
       <div className="container navbar-container">
         {/* Brand Logo */}
         <Link to="/" className="navbar-brand">

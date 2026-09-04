@@ -114,7 +114,7 @@ const AppSpecialitySection = () => {
   }, []);
 
   return (
-    <section className="spec-section" ref={sectionRef}>
+    <section className="spec-section" ref={sectionRef} id="section-app-speciality">
       <div className="spec-noise" />
       <div className="container">
         <div className="spec-head" ref={headRef}>

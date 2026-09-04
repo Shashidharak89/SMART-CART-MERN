@@ -92,7 +92,7 @@ const StatsBannerSection = () => {
   }, []);
 
   return (
-    <section className="stats-banner-section" ref={sectionRef}>
+    <section className="stats-banner-section" ref={sectionRef} id="section-stats-banner">
       <div className="stats-banner-bg" ref={bgRef} />
       <div className="stats-banner-overlay" />
       <div className="container stats-banner-inner">

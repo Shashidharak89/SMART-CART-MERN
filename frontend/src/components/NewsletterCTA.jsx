@@ -86,7 +86,7 @@ const NewsletterCTA = () => {
   );
 
   return (
-    <section className="nl-section" ref={sectionRef}>
+    <section className="nl-section" ref={sectionRef} id="section-newsletter">
       <div className="nl-bg" ref={bgRef} />
       <div className="nl-noise" />
       <div className="container nl-inner">
