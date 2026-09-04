@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { FiMail, FiArrowRight } from 'react-icons/fi';
+import { API_BASE_URL } from '../config/api';
 import './NewsletterCTA.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -16,7 +17,10 @@ const NewsletterCTA = () => {
   const textRef = useRef(null);
   const formRef = useRef(null);
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -67,13 +71,37 @@ const NewsletterCTA = () => {
     return () => ctx.revert();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email) return;
-    gsap.to(formRef.current, {
-      scale: 0.95, duration: 0.1, yoyo: true, repeat: 1,
-      onComplete: () => setSubmitted(true)
-    });
+    if (!email || loading) return;
+
+    setLoading(true);
+    setMessage('');
+    setIsError(false);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/subscribers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSubmitted(true);
+        setMessage(data.message || '🎉 You\'re in! Watch your inbox for SmartCart magic.');
+      } else {
+        setIsError(true);
+        setMessage(data.message || 'Subscription failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Subscription error:', err);
+      setIsError(true);
+      setMessage('Failed to connect to server. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderChars = (word, spaceAfter = false) => (
@@ -125,15 +153,21 @@ const NewsletterCTA = () => {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
-            <button type="submit" className="nl-btn">
-              Subscribe <FiArrowRight />
+            <button type="submit" className="nl-btn" disabled={loading}>
+              {loading ? 'Subscribing...' : <>Subscribe <FiArrowRight /></>}
             </button>
+            {message && isError && (
+              <p className="nl-error-msg" style={{ color: '#ff6b6b', marginTop: '10px', fontSize: '0.9rem' }}>
+                {message}
+              </p>
+            )}
           </form>
         ) : (
           <div className="nl-success" ref={formRef}>
-            🎉 You're in! Watch your inbox for SmartCart magic.
+            {message}
           </div>
         )}
 

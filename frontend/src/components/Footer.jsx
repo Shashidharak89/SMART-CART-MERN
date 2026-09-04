@@ -1,9 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logoImg from '../assets/SmartCart-logo.png';
+import { API_BASE_URL } from '../config/api';
 import './Footer.css';
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [statusMsg, setStatusMsg] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email || loading) return;
+
+    setLoading(true);
+    setStatusMsg('');
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/subscribers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setIsSuccess(true);
+        setStatusMsg(data.message || 'Successfully subscribed!');
+        setEmail('');
+      } else {
+        setIsSuccess(false);
+        setStatusMsg(data.message || 'Subscription failed');
+      }
+    } catch (err) {
+      console.error('Footer subscription error:', err);
+      setIsSuccess(false);
+      setStatusMsg('Failed to subscribe. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <footer className="footer-section">
       <div className="container">
@@ -42,10 +81,25 @@ const Footer = () => {
             <div className="link-column newsletter-col">
               <h4>Stay Connected</h4>
               <p>Subscribe for exclusive product launches and discount alerts.</p>
-              <div className="newsletter-form">
-                <input type="email" placeholder="Enter email address" className="form-input" />
-                <button className="btn btn-primary">Join</button>
-              </div>
+              <form className="newsletter-form" onSubmit={handleSubscribe}>
+                <input
+                  type="email"
+                  placeholder="Enter email address"
+                  className="form-input"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? '...' : 'Join'}
+                </button>
+              </form>
+              {statusMsg && (
+                <p className="newsletter-feedback" style={{ color: isSuccess ? '#4cd964' : '#ff6b6b', fontSize: '0.85rem', marginTop: '6px' }}>
+                  {statusMsg}
+                </p>
+              )}
             </div>
           </div>
         </div>
