@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config/api';
-import { FiLock, FiAlertTriangle, FiPackage, FiShoppingBag, FiRefreshCw, FiPhone, FiEdit, FiTrash2, FiPlus, FiStar } from 'react-icons/fi';
+import { FiLock, FiAlertTriangle, FiPackage, FiShoppingBag, FiRefreshCw, FiPhone, FiEdit, FiTrash2, FiPlus, FiStar, FiMail, FiCheck, FiX, FiSearch } from 'react-icons/fi';
 import './AdminPage.css';
 
 const AdminPage = ({ onOpenAuth }) => {
   const { user, token, login } = useAuth();
 
-  const [adminTab, setAdminTab] = useState('products'); // 'products' | 'orders'
+  const [adminTab, setAdminTab] = useState('products'); // 'products' | 'orders' | 'subscribers'
 
   // Product edit state
   const [editingProductId, setEditingProductId] = useState(null);
@@ -38,6 +38,14 @@ const AdminPage = ({ onOpenAuth }) => {
   const [ordersList, setOrdersList] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [orderFilter, setOrderFilter] = useState('All');
+
+  // Subscribers management state
+  const [subscribersList, setSubscribersList] = useState([]);
+  const [loadingSubscribers, setLoadingSubscribers] = useState(false);
+  const [subscriberSearch, setSubscriberSearch] = useState('');
+  const [newSubscriberEmail, setNewSubscriberEmail] = useState('');
+  const [editingSubId, setEditingSubId] = useState(null);
+  const [editingSubEmail, setEditingSubEmail] = useState('');
 
   const resetForm = () => {
     setName('');
@@ -113,6 +121,95 @@ const AdminPage = ({ onOpenAuth }) => {
     }
   };
 
+  // Fetch all subscribers for admin
+  const fetchSubscribers = async () => {
+    setLoadingSubscribers(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/subscribers`);
+      if (res.ok) {
+        const data = await res.json();
+        setSubscribersList(data);
+      }
+    } catch (err) {
+      console.error('Error fetching admin subscribers list:', err);
+    } finally {
+      setLoadingSubscribers(false);
+    }
+  };
+
+  const handleAddSubscriber = async (e) => {
+    e.preventDefault();
+    if (!newSubscriberEmail.trim()) return;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/subscribers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newSubscriberEmail }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessage({ type: 'success', text: `Subscriber "${newSubscriberEmail}" added successfully!` });
+        setNewSubscriberEmail('');
+        fetchSubscribers();
+      } else {
+        setMessage({ type: 'error', text: data.message || 'Failed to add subscriber' });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: err.message });
+    }
+  };
+
+  const handleStartEditSub = (sub) => {
+    setEditingSubId(sub._id);
+    setEditingSubEmail(sub.email);
+  };
+
+  const handleSaveEditSub = async (subId) => {
+    if (!editingSubEmail.trim()) return;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/subscribers/${subId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: editingSubEmail }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessage({ type: 'success', text: 'Subscriber email updated successfully!' });
+        setEditingSubId(null);
+        setEditingSubEmail('');
+        fetchSubscribers();
+      } else {
+        setMessage({ type: 'error', text: data.message || 'Failed to update subscriber' });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: err.message });
+    }
+  };
+
+  const handleDeleteSubscriber = async (subId) => {
+    if (!window.confirm('Are you sure you want to remove this subscriber from list?')) return;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/subscribers/${subId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessage({ type: 'success', text: 'Subscriber removed successfully.' });
+        fetchSubscribers();
+      } else {
+        setMessage({ type: 'error', text: data.message || 'Failed to delete subscriber' });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: err.message });
+    }
+  };
+
   const handleDeleteOrder = async (orderId) => {
     if (!window.confirm('Are you sure you want to delete this order from database?')) return;
 
@@ -136,11 +233,14 @@ const AdminPage = ({ onOpenAuth }) => {
 
   useEffect(() => {
     fetchProducts();
+    fetchSubscribers();
   }, []);
 
   useEffect(() => {
     if (adminTab === 'orders' && token) {
       fetchOrders();
+    } else if (adminTab === 'subscribers') {
+      fetchSubscribers();
     }
   }, [adminTab, token]);
 
@@ -359,6 +459,12 @@ const AdminPage = ({ onOpenAuth }) => {
             onClick={() => setAdminTab('orders')}
           >
             <FiShoppingBag style={{ marginRight: '6px' }} /> Customer Orders ({ordersList.length})
+          </button>
+          <button
+            className={`admin-tab-btn ${adminTab === 'subscribers' ? 'active' : ''}`}
+            onClick={() => setAdminTab('subscribers')}
+          >
+            <FiMail style={{ marginRight: '6px' }} /> Subscribers ({subscribersList.length})
           </button>
         </div>
       </div>
@@ -792,6 +898,156 @@ const AdminPage = ({ onOpenAuth }) => {
                           >
                             Delete
                           </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* SUBSCRIBERS MANAGEMENT TAB */}
+      {adminTab === 'subscribers' && (
+        <div className="admin-card admin-orders-card">
+          <div className="admin-card-header" style={{ flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h3>Newsletter Subscribers ({subscribersList.length})</h3>
+              <p className="admin-subtitle" style={{ marginTop: '0.2rem' }}>
+                Manage all registered newsletter email subscribers in your database.
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <button className="btn btn-secondary btn-sm" onClick={fetchSubscribers}>
+                <FiRefreshCw style={{ marginRight: '6px' }} /> Refresh List
+              </button>
+            </div>
+          </div>
+
+          {/* Add New Subscriber Form & Search Bar */}
+          <div className="subscriber-actions-bar" style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', margin: '1.5rem 0 1rem 0' }}>
+            <form onSubmit={handleAddSubscriber} style={{ display: 'flex', gap: '0.5rem', flex: 1, minWidth: '280px' }}>
+              <input
+                type="email"
+                placeholder="Enter email to add subscriber..."
+                value={newSubscriberEmail}
+                onChange={(e) => setNewSubscriberEmail(e.target.value)}
+                className="form-input"
+                style={{ flex: 1 }}
+                required
+              />
+              <button type="submit" className="btn btn-primary" style={{ whiteSpace: 'nowrap' }}>
+                <FiPlus style={{ marginRight: '4px' }} /> Add Subscriber
+              </button>
+            </form>
+
+            <div style={{ position: 'relative', minWidth: '240px' }}>
+              <input
+                type="text"
+                placeholder="Filter by email..."
+                value={subscriberSearch}
+                onChange={(e) => setSubscriberSearch(e.target.value)}
+                className="form-input"
+                style={{ paddingLeft: '2.2rem' }}
+              />
+              <FiSearch style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            </div>
+          </div>
+
+          {loadingSubscribers ? (
+            <p className="admin-loading-text">Loading subscriber database...</p>
+          ) : subscribersList.length === 0 ? (
+            <div className="admin-empty-box">
+              <p>No newsletter subscribers found.</p>
+            </div>
+          ) : (
+            <div className="admin-orders-table-wrapper">
+              <table className="admin-orders-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Email Address</th>
+                    <th>Subscribed Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {subscribersList
+                    .filter((sub) => sub.email.toLowerCase().includes(subscriberSearch.toLowerCase()))
+                    .map((sub, index) => (
+                      <tr key={sub._id}>
+                        <td>#{index + 1}</td>
+
+                        <td style={{ fontWeight: 600 }}>
+                          {editingSubId === sub._id ? (
+                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                              <input
+                                type="email"
+                                value={editingSubEmail}
+                                onChange={(e) => setEditingSubEmail(e.target.value)}
+                                className="form-input"
+                                style={{ padding: '0.35rem 0.6rem', fontSize: '0.9rem' }}
+                                autoFocus
+                              />
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => handleSaveEditSub(sub._id)}
+                                title="Save Email"
+                                style={{ padding: '0.35rem 0.6rem' }}
+                              >
+                                <FiCheck />
+                              </button>
+                              <button
+                                className="btn btn-secondary btn-sm"
+                                onClick={() => setEditingSubId(null)}
+                                title="Cancel"
+                                style={{ padding: '0.35rem 0.6rem' }}
+                              >
+                                <FiX />
+                              </button>
+                            </div>
+                          ) : (
+                            <span>{sub.email}</span>
+                          )}
+                        </td>
+
+                        <td className="order-date-text">
+                          {new Date(sub.createdAt).toLocaleString('en-IN', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </td>
+
+                        <td>
+                          <span className="badge badge-brand" style={{ background: '#e6f4ea', color: '#137333', borderColor: '#ceedd6' }}>
+                            Subscribed
+                          </span>
+                        </td>
+
+                        <td className="table-actions-cell">
+                          {editingSubId !== sub._id && (
+                            <>
+                              <button
+                                className="table-edit-btn"
+                                onClick={() => handleStartEditSub(sub)}
+                                title="Edit Email"
+                              >
+                                <FiEdit /> Edit
+                              </button>
+                              <button
+                                className="table-delete-btn"
+                                onClick={() => handleDeleteSubscriber(sub._id)}
+                                title="Remove Subscriber"
+                              >
+                                <FiTrash2 /> Delete
+                              </button>
+                            </>
+                          )}
                         </td>
                       </tr>
                     ))}

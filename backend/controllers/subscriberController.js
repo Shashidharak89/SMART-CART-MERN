@@ -1,8 +1,8 @@
 const Subscriber = require('../models/Subscriber');
 
-// @desc    Subscribe a user email to newsletter
+// @desc    Subscribe a user email to newsletter (Create)
 // @route   POST /api/subscribers
-// @access  Public
+// @access  Public / Admin
 const subscribeUser = async (req, res) => {
   try {
     const { email } = req.body;
@@ -45,7 +45,7 @@ const subscribeUser = async (req, res) => {
   }
 };
 
-// @desc    Get all subscribers
+// @desc    Get all subscribers (Read)
 // @route   GET /api/subscribers
 // @access  Public / Admin
 const getSubscribers = async (req, res) => {
@@ -58,7 +58,64 @@ const getSubscribers = async (req, res) => {
   }
 };
 
+// @desc    Update a subscriber email (Update)
+// @route   PUT /api/subscribers/:id
+// @access  Public / Admin
+const updateSubscriber = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const subscriber = await Subscriber.findById(req.params.id);
+
+    if (!subscriber) {
+      return res.status(404).json({ message: 'Subscriber not found' });
+    }
+
+    if (!email || !email.trim()) {
+      return res.status(400).json({ message: 'Please provide a valid email address' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Check if another subscriber has this email
+    const existing = await Subscriber.findOne({ email: cleanEmail, _id: { $ne: req.params.id } });
+    if (existing) {
+      return res.status(400).json({ message: 'Another subscriber with this email already exists' });
+    }
+
+    subscriber.email = cleanEmail;
+    const updated = await subscriber.save();
+
+    res.json(updated);
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Another subscriber with this email already exists' });
+    }
+    console.error('Error updating subscriber:', error);
+    res.status(500).json({ message: error.message || 'Server error updating subscriber' });
+  }
+};
+
+// @desc    Delete a subscriber (Delete)
+// @route   DELETE /api/subscribers/:id
+// @access  Public / Admin
+const deleteSubscriber = async (req, res) => {
+  try {
+    const subscriber = await Subscriber.findById(req.params.id);
+    if (!subscriber) {
+      return res.status(404).json({ message: 'Subscriber not found' });
+    }
+
+    await Subscriber.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Subscriber removed successfully' });
+  } catch (error) {
+    console.error('Error deleting subscriber:', error);
+    res.status(500).json({ message: 'Server error deleting subscriber' });
+  }
+};
+
 module.exports = {
   subscribeUser,
   getSubscribers,
+  updateSubscriber,
+  deleteSubscriber,
 };
