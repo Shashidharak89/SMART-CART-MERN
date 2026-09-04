@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import logoImg from '../assets/SmartCart-logo.png';
 import './Footer.css';
 
@@ -8,10 +9,10 @@ const Footer = () => {
       <div className="container">
         <div className="footer-top">
           <div className="footer-brand">
-            <a href="#" className="navbar-brand">
+            <Link to="/" className="navbar-brand">
               <img src={logoImg} alt="SmartCart Logo" className="navbar-logo-img" />
               <span className="brand-text">SMART<span className="brand-highlight">CART</span></span>
-            </a>
+            </Link>
             <p className="footer-desc">
               Your premier destination for high-performance gadgets, luxury fashion accessories, and minimalist home design.
             </p>
@@ -21,10 +22,10 @@ const Footer = () => {
             <div className="link-column">
               <h4>Shop</h4>
               <ul>
-                <li><a href="#catalog">Electronics</a></li>
-                <li><a href="#catalog">Fashion</a></li>
-                <li><a href="#catalog">Home & Living</a></li>
-                <li><a href="#catalog">New Arrivals</a></li>
+                <li><Link to="/products?category=Electronics">Electronics</Link></li>
+                <li><Link to="/products?category=Fashion">Fashion</Link></li>
+                <li><Link to="/products?category=Home%20%26%20Living">Home & Living</Link></li>
+                <li><Link to="/products">New Arrivals</Link></li>
               </ul>
             </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { API_BASE_URL } from '../config/api';
 import gsap from 'gsap';
@@ -7,24 +8,27 @@ import './ProductGrid.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const categories = ['All', 'Electronics', 'Fashion', 'Home & Living'];
+const categories = ['All', 'Electronics', 'Fashion', 'Home & Living', 'Wellness', 'Sports & Outdoors'];
 
 const ProductGrid = ({ onAddToCart, searchQuery, gridRef }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [loading, setLoading] = useState(true);
   const containerRef = useRef(null);
+
+  const categoryFromUrl = searchParams.get('category') || 'All';
+  const searchFromUrl = searchParams.get('search') || '';
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
         const queryParams = new URLSearchParams();
-        if (selectedCategory !== 'All') {
-          queryParams.append('category', selectedCategory);
+        if (categoryFromUrl !== 'All') {
+          queryParams.append('category', categoryFromUrl);
         }
-        if (searchQuery) {
-          queryParams.append('search', searchQuery);
+        if (searchFromUrl) {
+          queryParams.append('search', searchFromUrl);
         }
 
         const res = await fetch(`${API_BASE_URL}/api/products?${queryParams.toString()}`);
@@ -40,7 +44,7 @@ const ProductGrid = ({ onAddToCart, searchQuery, gridRef }) => {
     };
 
     fetchProducts();
-  }, [selectedCategory, searchQuery]);
+  }, [categoryFromUrl, searchFromUrl]);
 
   useEffect(() => {
     if (!loading && products.length > 0 && containerRef.current) {
@@ -64,6 +68,16 @@ const ProductGrid = ({ onAddToCart, searchQuery, gridRef }) => {
     }
   }, [loading, products]);
 
+  const handleCategoryTabClick = (cat) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (cat === 'All') {
+      nextParams.delete('category');
+    } else {
+      nextParams.set('category', cat);
+    }
+    setSearchParams(nextParams);
+  };
+
   return (
     <section className="product-grid-section" ref={gridRef} id="catalog">
       <div className="container">
@@ -71,20 +85,25 @@ const ProductGrid = ({ onAddToCart, searchQuery, gridRef }) => {
         <div className="grid-header">
           <div>
             <span className="badge badge-brand">Explore Collection</span>
-            <h2 className="grid-title">All Products</h2>
+            <h2 className="grid-title">
+              {categoryFromUrl !== 'All' ? `${categoryFromUrl} Products` : 'All Products'}
+            </h2>
           </div>
 
           {/* Category Tabs */}
           <div className="category-tabs">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                className={`tab-btn ${selectedCategory === cat ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const isActive = categoryFromUrl.toLowerCase() === cat.toLowerCase();
+              return (
+                <button
+                  key={cat}
+                  className={`tab-btn ${isActive ? 'active' : ''}`}
+                  onClick={() => handleCategoryTabClick(cat)}
+                >
+                  {cat}
+                </button>
+              );
+            })}
           </div>
         </div>
 

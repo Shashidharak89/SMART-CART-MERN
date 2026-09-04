@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './CategoryShowcase.css';
@@ -48,6 +49,7 @@ const directions = [
 ];
 
 const CategoryShowcase = () => {
+  const navigate = useNavigate();
   const sectionRef = useRef(null);
   const headRef = useRef(null);
   const gridRef = useRef(null);
@@ -98,6 +100,10 @@ const CategoryShowcase = () => {
     return () => ctx.revert();
   }, []);
 
+  const handleCategoryClick = (categoryLabel) => {
+    navigate(`/products?category=${encodeURIComponent(categoryLabel)}`);
+  };
+
   return (
     <section className="cat-section" ref={sectionRef}>
       <div className="container">
@@ -114,6 +120,8 @@ const CategoryShowcase = () => {
             <div
               key={i}
               className={`cat-cell ${c.span === 'tall' ? 'cat-cell--tall' : ''}`}
+              onClick={() => handleCategoryClick(c.label)}
+              style={{ cursor: 'pointer' }}
             >
               <img src={c.image} alt={c.label} className="cat-img" />
               <div className="cat-overlay">
