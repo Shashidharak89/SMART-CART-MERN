@@ -33,185 +33,160 @@ function MainApp() {
   // Normalize product ID helper
   const getProdId = (item) => item.id || item._id || (item.product && (item.product._id || item.product));
 
-  // Load cart from DB if logged in, or from localStorage if guest
+  // Helper to format backend cart items array for React state
+  const formatCartItems = (items = []) => {
+    return items.map((i) => ({
+      id: i.product?._id || i.product || i._id,
+      name: i.name,
+      price: i.price,
+      image: i.image,
+      quantity: i.quantity,
+    }));
+  };
+
+  // Fetch cart directly from database using JWT token
   useEffect(() => {
-    const syncAndFetchCart = async () => {
+    const fetchCartFromDB = async () => {
       if (token) {
         try {
-          // Check for guest cart items saved locally before login
-          const savedLocalCart = localStorage.getItem('smartcart_guest_cart');
-          let localItems = [];
-          if (savedLocalCart) {
-            try {
-              localItems = JSON.parse(savedLocalCart);
-            } catch (e) {
-              console.error('Error parsing guest cart:', e);
-            }
-          }
-
-          if (localItems.length > 0) {
-            // Post guest items to DB to merge
-            await fetch(`${API_BASE_URL}/api/cart`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({ items: localItems }),
-            });
-            localStorage.removeItem('smartcart_guest_cart');
-          }
-
-          // Fetch full cart from server
           const res = await fetch(`${API_BASE_URL}/api/cart`, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           if (res.ok) {
             const data = await res.json();
-            const formattedItems = (data.items || []).map((i) => ({
-              id: i.product?._id || i.product || i._id,
-              name: i.name,
-              price: i.price,
-              image: i.image,
-              quantity: i.quantity,
-            }));
-            setCartItems(formattedItems);
+            setCartItems(formatCartItems(data.items));
+          } else if (res.status === 401) {
+            setCartItems([]);
           }
         } catch (err) {
-          console.error('Error fetching DB cart:', err);
+          console.error('Error fetching cart from DB:', err);
         }
       } else {
-        // Guest user: load from localStorage
-        const savedLocalCart = localStorage.getItem('smartcart_guest_cart');
-        if (savedLocalCart) {
-          try {
-            setCartItems(JSON.parse(savedLocalCart));
-          } catch (e) {
-            console.error('Error loading guest cart from storage:', e);
-          }
-        }
+        // Reset cart when user is logged out (Cart stored in DB only)
+        setCartItems([]);
       }
     };
 
-    syncAndFetchCart();
+    fetchCartFromDB();
   }, [token]);
-
-  // Persist guest cart to local storage
-  useEffect(() => {
-    if (!token) {
-      localStorage.setItem('smartcart_guest_cart', JSON.stringify(cartItems));
-    }
-  }, [cartItems, token]);
 
   const handleOpenAuth = (mode = 'login') => {
     setAuthMode(mode);
     setIsAuthOpen(true);
   };
 
+  // Add product to cart directly in DB
   const handleAddToCart = async (product) => {
+    if (!token) {
+      // Require user to sign in to add items to database cart
+      handleOpenAuth('login');
+      return;
+    }
+
     const prodId = getProdId(product);
 
-    setCartItems((prevItems) => {
-      const existing = prevItems.find((item) => getProdId(item) === prodId);
-      if (existing) {
-        return prevItems.map((item) =>
-          getProdId(item) === prodId
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [
-        ...prevItems,
-        {
-          id: prodId,
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/cart`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: prodId,
           name: product.name,
           price: product.price,
           image: product.image,
           quantity: 1,
-        },
-      ];
-    });
+        }),
+      });
 
-    if (token) {
-      try {
-        await fetch(`${API_BASE_URL}/api/cart`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            productId: prodId,
-            name: product.name,
-            price: product.price,
-            image: product.image,
-            quantity: 1,
-          }),
-        });
-      } catch (err) {
-        console.error('Error syncing add-to-cart with DB:', err);
+      if (res.ok) {
+        const data = await res.json();
+        setCartItems(formatCartItems(data.items));
+      } else if (res.status === 401) {
+        handleOpenAuth('login');
       }
+    } catch (err) {
+      console.error('Error updating cart in DB:', err);
     }
   };
 
+  // Update item quantity directly in DB
   const handleUpdateQuantity = async (productId, newQuantity) => {
     if (newQuantity <= 0) {
       handleRemoveItem(productId);
       return;
     }
 
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        getProdId(item) === productId ? { ...item, quantity: newQuantity } : item
-      )
-    );
+    if (!token) {
+      handleOpenAuth('login');
+      return;
+    }
 
-    if (token) {
-      try {
-        await fetch(`${API_BASE_URL}/api/cart/item`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ productId, quantity: newQuantity }),
-        });
-      } catch (err) {
-        console.error('Error updating cart item in DB:', err);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/cart/item`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ productId, quantity: newQuantity }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCartItems(formatCartItems(data.items));
       }
+    } catch (err) {
+      console.error('Error updating cart item in DB:', err);
     }
   };
 
+  // Remove item directly from DB
   const handleRemoveItem = async (productId) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => getProdId(item) !== productId)
-    );
+    if (!token) return;
 
-    if (token) {
-      try {
-        await fetch(`${API_BASE_URL}/api/cart/item/${productId}`, {
-          method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } catch (err) {
-        console.error('Error removing cart item from DB:', err);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/cart/item/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCartItems(formatCartItems(data.items));
       }
+    } catch (err) {
+      console.error('Error removing cart item from DB:', err);
     }
   };
 
+  // Clear all items directly from DB
   const handleClearCart = async () => {
-    setCartItems([]);
+    if (!token) {
+      setCartItems([]);
+      return;
+    }
 
-    if (token) {
-      try {
-        await fetch(`${API_BASE_URL}/api/cart`, {
-          method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } catch (err) {
-        console.error('Error clearing cart in DB:', err);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/cart`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        setCartItems([]);
       }
+    } catch (err) {
+      console.error('Error clearing cart in DB:', err);
     }
   };
 
