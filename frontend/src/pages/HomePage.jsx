@@ -1,8 +1,14 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiTruck, FiShield, FiRefreshCw } from 'react-icons/fi';
 import Hero from '../components/Hero';
 import TrendingSection from '../components/TrendingSection';
+import WhyUsSection from '../components/WhyUsSection';
+import AppSpecialitySection from '../components/AppSpecialitySection';
+import ServicesSection from '../components/ServicesSection';
+import TestimonialsSection from '../components/TestimonialsSection';
+import StatsBannerSection from '../components/StatsBannerSection';
+import CategoryShowcase from '../components/CategoryShowcase';
+import NewsletterCTA from '../components/NewsletterCTA';
 import './HomePage.css';
 
 const HomePage = ({ onAddToCart, onOpenAuth }) => {
@@ -21,39 +27,39 @@ const HomePage = ({ onAddToCart, onOpenAuth }) => {
 
   return (
     <div className="home-page fade-in">
-      {/* Home Screen CTA Banner */}
+      {/* 1 ─ Hero Banner */}
       <Hero
         onExploreClick={handleExploreClick}
         onTrendingClick={handleTrendingClick}
         onOpenAuth={onOpenAuth}
       />
 
-      {/* Trending Section */}
+      {/* 2 ─ Trending Products */}
       <TrendingSection
         onAddToCart={onAddToCart}
         trendingRef={trendingRef}
       />
 
-      {/* Value Proposition Highlights */}
-      <section className="features-section">
-        <div className="container features-grid">
-          <div className="feature-card">
-            <div className="feature-icon"><FiTruck /></div>
-            <h3>Free Express Delivery</h3>
-            <p>On all orders over ₹499 with live tracking updates.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon"><FiShield /></div>
-            <h3>Guaranteed Authenticity</h3>
-            <p>100% verified premium products straight from makers.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon"><FiRefreshCw /></div>
-            <h3>Hassle-Free Returns</h3>
-            <p>30-day money-back guarantee with instant refunds.</p>
-          </div>
-        </div>
-      </section>
+      {/* 3 ─ Stats Banner (dark full-width) */}
+      <StatsBannerSection />
+
+      {/* 4 ─ Why Choose Us */}
+      <WhyUsSection />
+
+      {/* 5 ─ App Speciality Bento Grid (dark) */}
+      <AppSpecialitySection />
+
+      {/* 6 ─ Services */}
+      <ServicesSection />
+
+      {/* 7 ─ Category Showcase Mosaic */}
+      <CategoryShowcase />
+
+      {/* 8 ─ Testimonials Infinite Marquee */}
+      <TestimonialsSection />
+
+      {/* 9 ─ Newsletter CTA (dark) */}
+      <NewsletterCTA />
     </div>
   );
 };

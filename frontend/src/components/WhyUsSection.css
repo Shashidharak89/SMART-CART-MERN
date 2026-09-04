@@ -1,0 +1,201 @@
+/* ==============================
+   WHY US SECTION
+============================== */
+.whyus-section {
+  padding: 6rem 0;
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.whyus-section::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(88,129,87,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Stats row at top */
+.whyus-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2rem 2.5rem;
+  margin-bottom: 5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.whyus-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.whyus-stat-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 15%;
+  height: 70%;
+  width: 1px;
+  background: var(--border-color);
+}
+
+.why-stat-number {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--pista-main);
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.why-stat-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Main 2-col */
+.whyus-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.whyus-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--pista-light);
+  color: var(--pista-main);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.whyus-title {
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-main);
+  margin-bottom: 1.5rem;
+}
+
+.whyus-accent {
+  color: var(--pista-main);
+}
+
+.whyus-line {
+  width: 80px;
+  height: 4px;
+  background: var(--pista-main);
+  border-radius: var(--radius-full);
+  margin-bottom: 1.5rem;
+}
+
+.whyus-desc {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+}
+
+.whyus-trust-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--cream-soft);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
+}
+
+/* Right cards */
+.whyus-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.whyus-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.whyus-card:hover {
+  transform: translateX(6px);
+  border-color: var(--pista-main);
+  box-shadow: var(--shadow-glow);
+}
+
+.whyus-card-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.whyus-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+}
+
+.whyus-card-desc {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .whyus-main {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .whyus-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+  .whyus-title {
+    font-size: 2.5rem;
+  }
+  .whyus-stat-item:nth-child(2)::after {
+    display: none;
+  }
+}
