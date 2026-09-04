@@ -1,6 +1,6 @@
 .footer-section {
-  background: var(--cream-soft);
-  border-top: 1px solid var(--border-color);
+  background: #2c2420;
+  border-top: 1px solid rgba(255,255,255,0.08);
   padding: 4rem 0 2rem 0;
   margin-top: auto;
 }
@@ -18,9 +18,17 @@
   gap: 1rem;
 }
 
+.footer-section .navbar-brand {
+  color: #f4ede2;
+}
+
+.footer-section .brand-text {
+  color: #f4ede2;
+}
+
 .footer-desc {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: rgba(244, 237, 226, 0.6);
   line-height: 1.6;
   max-width: 340px;
 }
@@ -34,7 +42,7 @@
 .link-column h4 {
   font-size: 1rem;
   margin-bottom: 1.25rem;
-  color: var(--text-main);
+  color: #f4ede2;
 }
 
 .link-column ul {
@@ -46,7 +54,7 @@
 
 .link-column a {
   font-size: 0.875rem;
-  color: var(--text-muted);
+  color: rgba(244, 237, 226, 0.55);
   transition: var(--transition);
 }
 
@@ -56,7 +64,7 @@
 
 .newsletter-col p {
   font-size: 0.875rem;
-  color: var(--text-muted);
+  color: rgba(244, 237, 226, 0.55);
   margin-bottom: 1rem;
 }
 
@@ -80,9 +88,9 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 2rem;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid rgba(255,255,255,0.08);
   font-size: 0.85rem;
-  color: var(--text-subtle);
+  color: rgba(244, 237, 226, 0.4);
 }
 
 .legal-links {
@@ -91,7 +99,7 @@
 }
 
 .legal-links a {
-  color: var(--text-subtle);
+  color: rgba(244, 237, 226, 0.4);
 }
 
 .legal-links a:hover {
