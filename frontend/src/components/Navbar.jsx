@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { FiHeart } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
 import logoImg from '../assets/SmartCart-logo.png';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -15,8 +17,9 @@ const DARK_SECTION_IDS = [
   'section-newsletter',
 ];
 
-const Navbar = ({ cartCount, onOpenCart, onOpenAuth, onOpenSidebar, searchQuery, setSearchQuery }) => {
+const Navbar = ({ cartCount, onOpenCart, onOpenAuth, onOpenSidebar, onOpenWishlist, searchQuery, setSearchQuery }) => {
   const { user } = useAuth();
+  const { wishlistProductIds } = useWishlist();
   const headerRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -99,6 +102,18 @@ const Navbar = ({ cartCount, onOpenCart, onOpenAuth, onOpenSidebar, searchQuery,
           <Link to="/products" className="nav-page-link">
             Explore
           </Link>
+
+          {/* Wishlist Icon Button */}
+          <button
+            className="cart-btn wishlist-nav-btn"
+            onClick={onOpenWishlist || onOpenSidebar}
+            title="View Wishlist"
+          >
+            <FiHeart size={21} />
+            {wishlistProductIds.length > 0 && (
+              <span className="cart-badge wishlist-badge">{wishlistProductIds.length}</span>
+            )}
+          </button>
 
           {/* Cart Icon Button */}
           <button className="cart-btn" onClick={onOpenCart} title="View Shopping Cart">

@@ -145,6 +145,11 @@
   box-shadow: 0 2px 6px rgba(88, 129, 87, 0.3);
 }
 
+.wishlist-badge {
+  background: #ef4444;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+}
+
 .nav-auth-btn {
   padding: 0.6rem 1.25rem;
   font-size: 0.9rem;

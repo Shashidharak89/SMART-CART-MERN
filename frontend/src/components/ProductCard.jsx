@@ -1,14 +1,40 @@
 import React, { useState } from 'react';
-import { FaStar } from 'react-icons/fa';
+import { FaStar, FaHeart } from 'react-icons/fa';
+import { FiHeart } from 'react-icons/fi';
+import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 import './ProductCard.css';
 
-const ProductCard = ({ product, onAddToCart }) => {
+const ProductCard = ({ product, onAddToCart, onOpenAuth }) => {
   const [added, setAdded] = useState(false);
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const { token } = useAuth();
+
+  const prodId = product._id || product.id;
+  const isWishlisted = isInWishlist(prodId);
 
   const handleAdd = () => {
     onAddToCart(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
+  };
+
+  const handleWishlistClick = async (e) => {
+    e.stopPropagation();
+    if (!token) {
+      if (onOpenAuth) {
+        onOpenAuth('login');
+      }
+      return;
+    }
+
+    if (isWishlisted) {
+      // Toggle remove or attempt add (User requested: if added says already there in wishlist)
+      // Clicking heart when already wishlisted can offer remove or state notification
+      await addToWishlist(prodId);
+    } else {
+      await addToWishlist(prodId);
+    }
   };
 
   const getTagBadgeClass = (tag) => {
@@ -33,6 +59,22 @@ const ProductCard = ({ product, onAddToCart }) => {
             {product.tag}
           </span>
         )}
+
+        {/* Wishlist Heart Icon Button */}
+        <button
+          className={`wishlist-heart-btn ${isWishlisted ? 'is-wishlisted' : ''}`}
+          onClick={handleWishlistClick}
+          title={isWishlisted ? 'Already in Wishlist' : 'Add to Wishlist'}
+          type="button"
+          aria-label="Wishlist"
+        >
+          {isWishlisted ? (
+            <FaHeart className="heart-icon filled-heart" />
+          ) : (
+            <FiHeart className="heart-icon outline-heart" />
+          )}
+        </button>
+
         <img src={product.image} alt={product.name} className="product-image" />
       </div>
 

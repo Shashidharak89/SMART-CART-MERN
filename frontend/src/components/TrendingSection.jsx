@@ -7,7 +7,7 @@ import './TrendingSection.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TrendingSection = ({ onAddToCart, trendingRef }) => {
+const TrendingSection = ({ onAddToCart, onOpenAuth, trendingRef }) => {
   const sectionRef = useRef(null);
   const cardsRef = useRef(null);
 
@@ -91,6 +91,7 @@ const TrendingSection = ({ onAddToCart, trendingRef }) => {
               key={product.id}
               product={product}
               onAddToCart={onAddToCart}
+              onOpenAuth={onOpenAuth}
             />
           ))}
         </div>

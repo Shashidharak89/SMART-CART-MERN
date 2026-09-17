@@ -2,7 +2,7 @@ import React from 'react';
 import ProductGrid from '../components/ProductGrid';
 import './ExploreProductsPage.css';
 
-const ExploreProductsPage = ({ onAddToCart, searchQuery }) => {
+const ExploreProductsPage = ({ onAddToCart, onOpenAuth, searchQuery }) => {
   return (
     <div className="explore-products-page fade-in">
       <div className="explore-hero-banner">
@@ -17,6 +17,7 @@ const ExploreProductsPage = ({ onAddToCart, searchQuery }) => {
 
       <ProductGrid
         onAddToCart={onAddToCart}
+        onOpenAuth={onOpenAuth}
         searchQuery={searchQuery}
       />
     </div>

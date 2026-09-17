@@ -10,7 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const categories = ['All', 'Electronics', 'Fashion', 'Home & Living', 'Wellness', 'Sports & Outdoors'];
 
-const ProductGrid = ({ onAddToCart, searchQuery, gridRef }) => {
+const ProductGrid = ({ onAddToCart, onOpenAuth, searchQuery, gridRef }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -121,6 +121,7 @@ const ProductGrid = ({ onAddToCart, searchQuery, gridRef }) => {
                 key={product.id}
                 product={product}
                 onAddToCart={onAddToCart}
+                onOpenAuth={onOpenAuth}
               />
             ))}
           </div>

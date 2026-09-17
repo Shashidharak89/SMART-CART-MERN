@@ -37,6 +37,7 @@ const HomePage = ({ onAddToCart, onOpenAuth }) => {
       {/* 2 ─ Trending Products */}
       <TrendingSection
         onAddToCart={onAddToCart}
+        onOpenAuth={onOpenAuth}
         trendingRef={trendingRef}
       />
 

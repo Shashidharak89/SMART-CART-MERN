@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { WishlistProvider, useWishlist } from './context/WishlistContext';
 import { API_BASE_URL } from './config/api';
 import Navbar from './components/Navbar';
 import ProfileSidebar from './components/ProfileSidebar';
@@ -13,10 +14,12 @@ import Footer from './components/Footer';
 
 function MainApp() {
   const { user, token } = useAuth();
+  const { toastNotification } = useWishlist();
   const location = useLocation();
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [sidebarInitialTab, setSidebarInitialTab] = useState('menu');
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,6 +79,19 @@ function MainApp() {
   const handleOpenAuth = (mode = 'login') => {
     setAuthMode(mode);
     setIsAuthOpen(true);
+  };
+
+  const handleOpenSidebar = (tab = 'menu') => {
+    setSidebarInitialTab(tab);
+    setIsSidebarOpen(true);
+  };
+
+  const handleOpenWishlist = () => {
+    if (!token) {
+      handleOpenAuth('login');
+      return;
+    }
+    handleOpenSidebar('wishlist');
   };
 
   // Add product to cart directly in DB
@@ -199,7 +215,8 @@ function MainApp() {
         cartCount={totalCartCount}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenAuth={handleOpenAuth}
-        onOpenSidebar={() => setIsSidebarOpen(true)}
+        onOpenSidebar={() => handleOpenSidebar('menu')}
+        onOpenWishlist={handleOpenWishlist}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
@@ -221,6 +238,7 @@ function MainApp() {
             element={
               <ExploreProductsPage
                 onAddToCart={handleAddToCart}
+                onOpenAuth={handleOpenAuth}
                 searchQuery={searchQuery}
               />
             }
@@ -245,6 +263,8 @@ function MainApp() {
         onClose={() => setIsSidebarOpen(false)}
         onOpenAuth={handleOpenAuth}
         onOpenCart={() => setIsCartOpen(true)}
+        onAddToCart={handleAddToCart}
+        initialTab={sidebarInitialTab}
       />
 
       {/* Auth Modal (Login / Register) */}
@@ -264,6 +284,15 @@ function MainApp() {
         onClearCart={handleClearCart}
         onOpenAuth={handleOpenAuth}
       />
+
+      {/* Floating Toast Notification Container */}
+      {toastNotification && (
+        <div className="app-toast-container">
+          <div className={`app-toast ${toastNotification.type}`}>
+            {toastNotification.message}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -271,9 +300,11 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <Router>
-        <MainApp />
-      </Router>
+      <WishlistProvider>
+        <Router>
+          <MainApp />
+        </Router>
+      </WishlistProvider>
     </AuthProvider>
   );
 }

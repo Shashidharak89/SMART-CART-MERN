@@ -1,18 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
 import { API_BASE_URL } from '../config/api';
-import { FiMapPin, FiPhone, FiShoppingBag } from 'react-icons/fi';
+import { FiMapPin, FiPhone, FiShoppingBag, FiHeart, FiSearch, FiTrash2, FiShoppingCart } from 'react-icons/fi';
 import './ProfileSidebar.css';
 
-const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
+const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart, onAddToCart, initialTab = 'menu' }) => {
   const { user, token, updateProfile, logout } = useAuth();
+  const {
+    wishlistData,
+    loadingWishlist,
+    wishlistProductIds,
+    fetchWishlist,
+    removeFromWishlist,
+  } = useWishlist();
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [activeTab, setActiveTab] = useState('menu'); // 'menu' | 'address' | 'orders'
+  const [activeTab, setActiveTab] = useState(initialTab); // 'menu' | 'address' | 'orders' | 'wishlist'
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+
+  // Wishlist tab pagination and search state
+  const [wishlistPage, setWishlistPage] = useState(1);
+  const [wishlistSearch, setWishlistSearch] = useState('');
 
   // Address edit state
   const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -26,6 +39,15 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
   });
   const [addressSuccessMsg, setAddressSuccessMsg] = useState('');
   const [addressErrorMsg, setAddressErrorMsg] = useState('');
+
+  // Sync initialTab when provided or when drawer opens
+  useEffect(() => {
+    if (isOpen) {
+      if (initialTab) {
+        setActiveTab(initialTab);
+      }
+    }
+  }, [isOpen, initialTab]);
 
   // Populate address form when user loads
   useEffect(() => {
@@ -48,6 +70,13 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
     }
   }, [activeTab, token]);
 
+  // Fetch wishlist when tab switches to 'wishlist', page changes, or search keyword changes
+  useEffect(() => {
+    if (activeTab === 'wishlist' && token) {
+      fetchWishlist(wishlistPage, 20, wishlistSearch);
+    }
+  }, [activeTab, token, wishlistPage, wishlistSearch, fetchWishlist]);
+
   // Reset tab on drawer close
   useEffect(() => {
     if (!isOpen) {
@@ -56,6 +85,8 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
         setIsEditingAddress(false);
         setAddressSuccessMsg('');
         setAddressErrorMsg('');
+        setWishlistSearch('');
+        setWishlistPage(1);
       }, 300);
     }
   }, [isOpen]);
@@ -145,6 +176,12 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
     }
   };
 
+  const handleWishlistAddToCart = (product) => {
+    if (onAddToCart) {
+      onAddToCart(product);
+    }
+  };
+
   return (
     <div className="sidebar-overlay" onClick={onClose}>
       <div className="sidebar-drawer slide-left" onClick={(e) => e.stopPropagation()}>
@@ -204,6 +241,19 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
                   Explore Products
                 </button>
 
+                {user && (
+                  <button
+                    className="sidebar-link"
+                    onClick={() => setActiveTab('wishlist')}
+                  >
+                    <FiHeart style={{ fontSize: '18px' }} />
+                    My Wishlist
+                    {wishlistProductIds.length > 0 && (
+                      <span className="sidebar-link-badge">{wishlistProductIds.length}</span>
+                    )}
+                  </button>
+                )}
+
                 {user && user.role === 'admin' && (
                   <button
                     className={`sidebar-link ${location.pathname === '/admin-pannel' ? 'active' : ''}`}
@@ -241,12 +291,20 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
                 <div className="sidebar-account-menu">
                   <button
                     className="sidebar-link"
+                    onClick={() => setActiveTab('wishlist')}
+                  >
+                    <FiHeart style={{ fontSize: '18px', color: '#ef4444' }} />
+                    Saved Wishlist
+                    {wishlistProductIds.length > 0 && (
+                      <span className="sidebar-link-badge badge-rose">{wishlistProductIds.length}</span>
+                    )}
+                  </button>
+
+                  <button
+                    className="sidebar-link"
                     onClick={() => setActiveTab('address')}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
+                    <FiMapPin style={{ fontSize: '18px' }} />
                     Saved Delivery Address
                   </button>
 
@@ -254,12 +312,7 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
                     className="sidebar-link"
                     onClick={() => setActiveTab('orders')}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="16" y1="13" x2="8" y2="13"></line>
-                      <line x1="16" y1="17" x2="8" y2="17"></line>
-                    </svg>
+                    <FiShoppingBag style={{ fontSize: '18px' }} />
                     My Orders
                   </button>
 
@@ -300,6 +353,114 @@ const ProfileSidebar = ({ isOpen, onClose, onOpenAuth, onOpenCart }) => {
                 </div>
               )}
             </>
+          )}
+
+          {/* WISHLIST TAB */}
+          {activeTab === 'wishlist' && (
+            <div className="sidebar-tab-content">
+              <div className="wishlist-tab-header">
+                <h3 className="tab-title">
+                  <FiHeart style={{ color: '#ef4444', marginRight: '6px' }} />
+                  My Wishlist ({wishlistData.totalProducts || 0})
+                </h3>
+
+                {/* Wishlist Search Filter Input */}
+                <div className="wishlist-search-box">
+                  <FiSearch className="wishlist-search-icon" />
+                  <input
+                    type="text"
+                    placeholder="Search in wishlist..."
+                    value={wishlistSearch}
+                    onChange={(e) => {
+                      setWishlistSearch(e.target.value);
+                      setWishlistPage(1);
+                    }}
+                    className="wishlist-search-input"
+                  />
+                  {wishlistSearch && (
+                    <button className="clear-wishlist-search" onClick={() => setWishlistSearch('')}>×</button>
+                  )}
+                </div>
+              </div>
+
+              {loadingWishlist ? (
+                <div className="loading-spinner-box">Loading wishlist items...</div>
+              ) : !wishlistData.products || wishlistData.products.length === 0 ? (
+                <div className="no-orders-box">
+                  <FiHeart style={{ fontSize: '3rem', color: '#cbd5e1', marginBottom: '0.75rem' }} />
+                  <p>{wishlistSearch ? 'No wishlist items match your search.' : 'Your wishlist is empty.'}</p>
+                  <button
+                    className="btn btn-primary"
+                    style={{ marginTop: '1rem' }}
+                    onClick={() => handleNav('/products')}
+                  >
+                    Explore Products
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="wishlist-items-grid">
+                    {wishlistData.products.map((item) => (
+                      <div key={item._id || item.id} className="wishlist-item-card">
+                        <img src={item.image} alt={item.name} className="wishlist-item-img" />
+                        <div className="wishlist-item-info">
+                          <span className="wishlist-item-category">{item.category}</span>
+                          <h4 className="wishlist-item-title">{item.name}</h4>
+                          <div className="wishlist-item-price-row">
+                            <span className="wishlist-item-price">₹{item.price?.toLocaleString('en-IN')}</span>
+                            {item.originalPrice && (
+                              <span className="wishlist-item-original-price">
+                                ₹{item.originalPrice?.toLocaleString('en-IN')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="wishlist-item-actions">
+                          <button
+                            className="btn btn-primary wishlist-add-cart-btn"
+                            onClick={() => handleWishlistAddToCart(item)}
+                            title="Add to Shopping Cart"
+                          >
+                            <FiShoppingCart size={15} /> Add
+                          </button>
+                          <button
+                            className="wishlist-remove-btn"
+                            onClick={() => removeFromWishlist(item._id || item.id)}
+                            title="Remove from Wishlist"
+                          >
+                            <FiTrash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Wishlist Pagination Controls */}
+                  {wishlistData.pages > 1 && (
+                    <div className="wishlist-pagination">
+                      <button
+                        disabled={wishlistPage <= 1}
+                        onClick={() => setWishlistPage((p) => Math.max(1, p - 1))}
+                        className="btn btn-secondary pagination-btn"
+                      >
+                        Prev
+                      </button>
+                      <span className="pagination-info">
+                        Page {wishlistData.page} of {wishlistData.pages}
+                      </span>
+                      <button
+                        disabled={wishlistPage >= wishlistData.pages}
+                        onClick={() => setWishlistPage((p) => Math.min(wishlistData.pages, p + 1))}
+                        className="btn btn-secondary pagination-btn"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           )}
 
           {/* SAVED ADDRESS TAB */}
