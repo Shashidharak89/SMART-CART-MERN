@@ -1,7 +1,27 @@
-/* HomePage — layout-level resets only */
-/* Each section manages its own padding/bg */
+/* HomePage — layout-level resets & Lenis smooth scrolling */
 
 .home-page {
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+/* Lenis Smooth Scroll Global Overrides for Home Page */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
